@@ -269,11 +269,65 @@ public class ExcelParser {
 		return prodsConsDistanceMatrix;
 	}
 
-	public static void parseProdBasesDistanceMatrixExcelFile(String filePath) {
+	public static Matrix parseProdBasesDistanceMatrixExcelFile(String filePath) {
 
+		int numOfProducers = Solver.getInstance().getDatabase().getProducersList().size();
+		int numOfBases = Solver.getInstance().getDatabase().getBasesList().size();
+
+		Matrix prodsBasesDistanceMatrix = new Matrix(numOfProducers, numOfBases);
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+			Workbook workBook = new HSSFWorkbook(fileInputStream);
+			Sheet sheet = workBook.getSheetAt(neededSheetIndex);
+
+			for (int i = 1; i < numOfProducers + 1; i++) {
+				Row row = sheet.getRow(i);
+				for (int j = 1; j < numOfBases + 1; j++) {
+					double distance = row.getCell(j).getNumericCellValue();
+					prodsBasesDistanceMatrix.set(i - 1, j - 1, distance);
+				}
+			}
+
+			workBook.close();
+			fileInputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return prodsBasesDistanceMatrix;
 	}
 
-	public static void parseBasesConsDistanceMatrixExcelFile(String filePath) {
+	public static Matrix parseBasesConsDistanceMatrixExcelFile(String filePath) {
 
+		int numOfBases = Solver.getInstance().getDatabase().getBasesList().size();
+		int numOfConsumers = Solver.getInstance().getDatabase().getConsumersList().size();
+
+		Matrix basesConsDistanceMatrix = new Matrix(numOfBases, numOfConsumers);
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+			Workbook workBook = new HSSFWorkbook(fileInputStream);
+			Sheet sheet = workBook.getSheetAt(neededSheetIndex);
+
+			for (int i = 1; i < numOfBases + 1; i++) {
+				Row row = sheet.getRow(i);
+				for (int j = 1; j < numOfConsumers + 1; j++) {
+					double distance = row.getCell(j).getNumericCellValue();
+					basesConsDistanceMatrix.set(i - 1, j - 1, distance);
+				}
+			}
+
+			workBook.close();
+			fileInputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return basesConsDistanceMatrix;
 	}
 }
