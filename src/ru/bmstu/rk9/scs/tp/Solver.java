@@ -1,5 +1,6 @@
 package ru.bmstu.rk9.scs.tp;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -639,7 +640,7 @@ public class Solver {
 			int id = consumers.get(numOfLastConsumer).getId() + 1;
 			String name = "fictive";
 			double consumption = totalProduction - totalConsumption;
-			ArrayList<String> months = null;
+			ArrayList<Month> months = null;
 
 			ConsumptionPoint fictiveConsumer = new ConsumptionPoint(id, name, consumption, months);
 			fictiveConsumer.setType(Type.FICTIVE);

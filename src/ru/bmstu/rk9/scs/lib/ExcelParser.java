@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -118,7 +119,7 @@ public class ExcelParser {
 					String name = row.getCell(nameColumnIndex).getStringCellValue();
 					double consumption = row.getCell(consumptionColumnIndex).getNumericCellValue();
 					String monthsString = row.getCell(monthsListColumnIndex).getStringCellValue();
-					ArrayList<String> monthsList = parseMonthsString(monthsString);
+					ArrayList<Month> monthsList = parseMonthsString(monthsString);
 					consumersList.add(new ConsumptionPoint(id, name, consumption, monthsList));
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
@@ -136,52 +137,21 @@ public class ExcelParser {
 		return consumersList;
 	}
 
-	public static ArrayList<String> parseMonthsString(String monthsString) throws Exception {
-		ArrayList<String> monthsList = new ArrayList<String>();
+	// TODO redo this parse method!!
+	public static ArrayList<Month> parseMonthsString(String monthsString) throws Exception {
+		ArrayList<Month> monthsList = new ArrayList<Month>();
 		String delimiter = "[-]+";
 		String[] months = monthsString.split(delimiter);
 
-		for (int i = 0; i < months.length; i++)
-			switch (months[i]) {
-			case "1":
-				monthsList.add("JANUARY");
-				break;
-			case "2":
-				monthsList.add("FEBRUARY");
-				break;
-			case "3":
-				monthsList.add("MARCH");
-				break;
-			case "4":
-				monthsList.add("APRIL");
-				break;
-			case "5":
-				monthsList.add("MAY");
-				break;
-			case "6":
-				monthsList.add("JUNE");
-				break;
-			case "7":
-				monthsList.add("JULY");
-				break;
-			case "8":
-				monthsList.add("AUGUST");
-				break;
-			case "9":
-				monthsList.add("SEPTEMBER");
-				break;
-			case "10":
-				monthsList.add("OCTOBER");
-				break;
-			case "11":
-				monthsList.add("NOVEMBER");
-				break;
-			case "12":
-				monthsList.add("DECEMBER");
-				break;
-			default:
-				throw new Exception("Wrong month number!");
-			}
+		if (months.length > 2) {
+			throw new Exception("Wrong data: incorrect \"months\" record!");
+		}
+
+		int firstMonthId = Integer.parseInt(months[0]);
+		int lastMonthID = Integer.parseInt(months[1]);
+
+		for (int i = firstMonthId; i <= lastMonthID; i++)
+			monthsList.add(Month.of(i));
 
 		return monthsList;
 	}

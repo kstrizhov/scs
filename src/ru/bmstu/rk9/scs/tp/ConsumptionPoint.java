@@ -1,13 +1,14 @@
 package ru.bmstu.rk9.scs.tp;
 
+import java.time.Month;
 import java.util.ArrayList;
 
 public class ConsumptionPoint extends Point {
 
 	private double consumption;
-	private ArrayList<String> monthsList;
+	private ArrayList<Month> monthsList;
 
-	public ConsumptionPoint(int id, String name, double consumption, ArrayList<String> months) {
+	public ConsumptionPoint(int id, String name, double consumption, ArrayList<Month> months) {
 		this.id = id;
 		this.name = name;
 		this.setConsumption(consumption);
@@ -22,11 +23,11 @@ public class ConsumptionPoint extends Point {
 		this.consumption = consumption;
 	}
 
-	public ArrayList<String> getMonthsList() {
+	public ArrayList<Month> getMonthsList() {
 		return monthsList;
 	}
 
-	public void setMonthsList(ArrayList<String> months) {
+	public void setMonthsList(ArrayList<Month> months) {
 		this.monthsList = months;
 	}
 

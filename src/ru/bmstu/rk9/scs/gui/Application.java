@@ -1,5 +1,6 @@
 package ru.bmstu.rk9.scs.gui;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -305,8 +306,8 @@ public class Application {
 					System.out.println("id:" + p.getId());
 					System.out.println("name: " + p.getName());
 					System.out.println("cons: " + p.getConsumption());
-					for (String s : p.getMonthsList())
-						System.out.println("months: " + s);
+					for (Month m : p.getMonthsList())
+						System.out.println("months: " + m);
 				}
 				for (Base b : list3) {
 					System.out.println("id:" + b.getId());
