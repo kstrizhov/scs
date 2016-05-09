@@ -8,7 +8,7 @@ import java.util.Map;
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.tp.Point.Type;
 
-public class Planner {
+public class Solver {
 
 	private static double calculateCostFunction(Matrix X, Matrix C) {
 		int numOfRows = X.getRowDimension();

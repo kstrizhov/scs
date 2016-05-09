@@ -240,8 +240,8 @@ public class ExcelParser {
 
 	public static Matrix parseProdConsDistanceMatrixExcelFile(String filePath) {
 
-		int numOfProducers = Solver.getInstance().getDatabase().getProducersList().size();
-		int numOfConsumers = Solver.getInstance().getDatabase().getConsumersList().size();
+		int numOfProducers = DBHolder.getInstance().getDatabase().getProducersList().size();
+		int numOfConsumers = DBHolder.getInstance().getDatabase().getConsumersList().size();
 
 		Matrix prodsConsDistanceMatrix = new Matrix(numOfProducers, numOfConsumers);
 
@@ -271,8 +271,8 @@ public class ExcelParser {
 
 	public static Matrix parseProdBasesDistanceMatrixExcelFile(String filePath) {
 
-		int numOfProducers = Solver.getInstance().getDatabase().getProducersList().size();
-		int numOfBases = Solver.getInstance().getDatabase().getBasesList().size();
+		int numOfProducers = DBHolder.getInstance().getDatabase().getProducersList().size();
+		int numOfBases = DBHolder.getInstance().getDatabase().getBasesList().size();
 
 		Matrix prodsBasesDistanceMatrix = new Matrix(numOfProducers, numOfBases);
 
@@ -302,8 +302,8 @@ public class ExcelParser {
 
 	public static Matrix parseBasesConsDistanceMatrixExcelFile(String filePath) {
 
-		int numOfBases = Solver.getInstance().getDatabase().getBasesList().size();
-		int numOfConsumers = Solver.getInstance().getDatabase().getConsumersList().size();
+		int numOfBases = DBHolder.getInstance().getDatabase().getBasesList().size();
+		int numOfConsumers = DBHolder.getInstance().getDatabase().getConsumersList().size();
 
 		Matrix basesConsDistanceMatrix = new Matrix(numOfBases, numOfConsumers);
 

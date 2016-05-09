@@ -1,14 +1,14 @@
 package ru.bmstu.rk9.scs.lib;
 
-public class Solver {
-	private static Solver INSTANCE;
+public class DBHolder {
+	private static DBHolder INSTANCE;
 
-	private Solver() {
+	private DBHolder() {
 	}
 
-	public static synchronized Solver getInstance() {
+	public static synchronized DBHolder getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new Solver();
+			INSTANCE = new DBHolder();
 			initDatabase();
 		}
 		return INSTANCE;

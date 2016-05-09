@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import ru.bmstu.rk9.scs.lib.ExcelParser;
-import ru.bmstu.rk9.scs.lib.Solver;
+import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
-import ru.bmstu.rk9.scs.tp.Planner;
+import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.tp.Producer;
-import ru.bmstu.rk9.scs.tp.Planner.Plan;
+import ru.bmstu.rk9.scs.tp.Solver.Plan;
 
 import org.eclipse.swt.widgets.Text;
 
@@ -110,7 +110,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				Solver.getInstance().getDatabase().setProducersList(ExcelParser.parseProducersExcelFile(selected));
+				DBHolder.getInstance().getDatabase().setProducersList(ExcelParser.parseProducersExcelFile(selected));
 			}
 		});
 		loadProducersInfoButton.setText("Загрузить [..]");
@@ -128,7 +128,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				Solver.getInstance().getDatabase().setConsumersList(ExcelParser.parseConsumersExcelFile(selected));
+				DBHolder.getInstance().getDatabase().setConsumersList(ExcelParser.parseConsumersExcelFile(selected));
 			}
 		});
 		loadConsumersInfoButton.setText("Загрузить [..]");
@@ -146,7 +146,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				Solver.getInstance().getDatabase().setBasesList(ExcelParser.parseBasesExcelFile(selected));
+				DBHolder.getInstance().getDatabase().setBasesList(ExcelParser.parseBasesExcelFile(selected));
 			}
 		});
 		loadBasesInfoButton.setText("Загрузить [..]");
@@ -164,7 +164,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				Solver.getInstance().getDatabase()
+				DBHolder.getInstance().getDatabase()
 						.setProdsConsDistanceMatrix(ExcelParser.parseProdConsDistanceMatrixExcelFile(selected));
 			}
 		});
@@ -209,12 +209,12 @@ public class Application {
 					enterEpsilonLabel.setEnabled(true);
 					enterEpsilonText.setEnabled(true);
 					enterEpsilonButton.setEnabled(true);
-					Solver.getInstance().getDatabase().setEpsUsed(true);
+					DBHolder.getInstance().getDatabase().setEpsUsed(true);
 				} else {
 					enterEpsilonLabel.setEnabled(false);
 					enterEpsilonText.setEnabled(false);
 					enterEpsilonButton.setEnabled(false);
-					Solver.getInstance().getDatabase().setEpsUsed(false);
+					DBHolder.getInstance().getDatabase().setEpsUsed(false);
 				}
 			}
 		});
@@ -227,24 +227,24 @@ public class Application {
 		solveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				List<Producer> producersList = Solver.getInstance().getDatabase().getProducersList();
-				List<ConsumptionPoint> consumersList = Solver.getInstance().getDatabase().getConsumersList();
+				List<Producer> producersList = DBHolder.getInstance().getDatabase().getProducersList();
+				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getDatabase().getConsumersList();
 
-				Matrix C0 = Solver.getInstance().getDatabase().getProdsConsDistanceMatrix();
+				Matrix C0 = DBHolder.getInstance().getDatabase().getProdsConsDistanceMatrix();
 
-				Matrix isolatedC0 = Planner.isolateTransportationProblem(producersList, consumersList, C0);
+				Matrix isolatedC0 = Solver.isolateTransportationProblem(producersList, consumersList, C0);
 
 				System.out.println("C0 after isolation");
 				C0.print(C0.getColumnDimension(), 2);
 
-				Plan plan = Planner.createBasicPlan(producersList, consumersList);
+				Plan plan = Solver.createBasicPlan(producersList, consumersList);
 
 				plan.X0.print(plan.X0.getColumnDimension(), 2);
 
 				if (isolatedC0 == null)
-					Planner.solve(plan, C0);
+					Solver.solve(plan, C0);
 				else
-					Planner.solve(plan, isolatedC0);
+					Solver.solve(plan, isolatedC0);
 			}
 		});
 		solveButton.setText("РЕШИТЬ");
@@ -270,7 +270,7 @@ public class Application {
 		newInstanceMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Solver.getInstance();
+				DBHolder.getInstance();
 				tabFolder.setEnabled(true);
 			}
 		});
@@ -292,9 +292,9 @@ public class Application {
 		testMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<Producer> list = Solver.getInstance().getDatabase().getProducersList();
-				ArrayList<ConsumptionPoint> list2 = Solver.getInstance().getDatabase().getConsumersList();
-				ArrayList<Base> list3 = Solver.getInstance().getDatabase().getBasesList();
+				ArrayList<Producer> list = DBHolder.getInstance().getDatabase().getProducersList();
+				ArrayList<ConsumptionPoint> list2 = DBHolder.getInstance().getDatabase().getConsumersList();
+				ArrayList<Base> list3 = DBHolder.getInstance().getDatabase().getBasesList();
 				for (Producer p : list) {
 					System.out.println("id:" + p.getId());
 					System.out.println("name: " + p.getName());
@@ -313,7 +313,7 @@ public class Application {
 					System.out.println("name: " + b.getName());
 					System.out.println("volume: " + b.getVolume());
 				}
-				Matrix m = Solver.getInstance().getDatabase().getProdsConsDistanceMatrix();
+				Matrix m = DBHolder.getInstance().getDatabase().getProdsConsDistanceMatrix();
 				m.print(m.getColumnDimension(), 2);
 			}
 		});
