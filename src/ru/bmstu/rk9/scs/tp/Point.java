@@ -2,7 +2,7 @@ package ru.bmstu.rk9.scs.tp;
 
 public abstract class Point {
 
-	enum Type {
+	public enum Type {
 		NATURAL, FICTIVE
 	}
 

@@ -32,7 +32,6 @@ import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
-import ru.bmstu.rk9.scs.tp.Solver.Plan;
 
 public class Application {
 
@@ -201,19 +200,6 @@ public class Application {
 			public void widgetSelected(SelectionEvent e) {
 				double eps = Double.parseDouble(enterEpsilonText.getText());
 				DBHolder.getInstance().getDatabase().setEps(eps);
-
-				ArrayList<ConsumptionPoint> consumers = DBHolder.getInstance().getDatabase().getConsumersList();
-				for (ConsumptionPoint c : consumers) {
-					double currentConsumption = c.getConsumption();
-					c.setConsumption(currentConsumption + eps);
-				}
-
-				ArrayList<Producer> producers = DBHolder.getInstance().getDatabase().getProducersList();
-				int numOfProducers = producers.size();
-				double lastProducersProduction = producers.get(numOfProducers - 1).getProduction();
-				int numOfConsumers = consumers.size();
-				producers.get(numOfProducers - 1).setProduction(lastProducersProduction + eps * numOfConsumers);
-
 			}
 		});
 		enterEpsilonButton.setEnabled(false);
@@ -252,21 +238,7 @@ public class Application {
 
 				Matrix C0 = DBHolder.getInstance().getDatabase().getProdsConsDistanceMatrix();
 
-				Matrix isolatedC0 = Solver.isolateTransportationProblem(producersList, consumersList, C0);
-
-				System.out.println("C0 after isolation");
-				C0.print(C0.getColumnDimension(), 2);
-
-				Plan plan = Solver.createBasicPlan(producersList, consumersList);
-
-				plan.X0.print(plan.X0.getColumnDimension(), 2);
-
-				Matrix result;
-
-				if (isolatedC0 == null)
-					result = Solver.solve(plan, C0);
-				else
-					result = Solver.solve(plan, isolatedC0);
+				Matrix solution = Solver.solve(producersList, consumersList, C0);
 			}
 		});
 		solveButton.setText("РЕШИТЬ");
@@ -351,7 +323,7 @@ public class Application {
 		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Scheduler scheduler = new Scheduler();
+				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getDatabase());
 				scheduler.schedule();
 			}
 		});

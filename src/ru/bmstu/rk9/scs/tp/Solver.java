@@ -12,6 +12,24 @@ import Jama.Matrix;
 import ru.bmstu.rk9.scs.tp.Point.Type;
 
 public class Solver {
+	
+	public static Matrix solve(List<Producer> producers, List<ConsumptionPoint> consumers, Matrix C0) {
+		
+		Matrix isolatedC0 = Solver.isolateTransportationProblem(producers, consumers, C0);
+
+		Plan plan = Solver.createBasicPlan(producers, consumers);
+		
+		try {
+			Solver.checkBasicPlan(plan, producers, consumers);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (isolatedC0 == null)
+			return applyPotentialMethod(plan, C0);
+		else
+			return applyPotentialMethod(plan, isolatedC0);
+	}
 
 	private static double calculateCostFunction(Matrix X, Matrix C) {
 		int numOfRows = X.getRowDimension();
@@ -38,7 +56,7 @@ public class Solver {
 		}
 	}
 
-	public static Plan createBasicPlan(List<Producer> p, List<ConsumptionPoint> c) {
+	private static Plan createBasicPlan(List<Producer> p, List<ConsumptionPoint> c) {
 
 		List<Producer> producers = new ArrayList<Producer>();
 		for (int i = 0; i < p.size(); i++) {
@@ -87,7 +105,7 @@ public class Solver {
 		return new Plan(X0, basis);
 	};
 
-	public static Matrix solve(Plan plan, Matrix C0) {
+	private static Matrix applyPotentialMethod(Plan plan, Matrix C0) {
 
 		Matrix X0 = plan.X0;
 
@@ -121,7 +139,7 @@ public class Solver {
 			return X0;
 		} else {
 			System.out.println("next step");
-			return solve(plan, C0);
+			return applyPotentialMethod(plan, C0);
 		}
 	}
 
