@@ -91,7 +91,7 @@ public class Solver {
 		return new Plan(X0, basis);
 	};
 
-	public static void solve(Plan plan, Matrix C0) {
+	public static Matrix solve(Plan plan, Matrix C0) {
 
 		Matrix X0 = plan.X0;
 
@@ -103,7 +103,7 @@ public class Solver {
 
 		if (checkOnOptimum(C1)) {
 			printResult(X0, C0);
-			return;
+			return X0;
 		}
 
 		MatrixElement minC1element = findMinElement(C1);
@@ -124,9 +124,10 @@ public class Solver {
 
 		if (checkOnOptimum(newC1)) {
 			printResult(X0, C0);
+			return X0;
 		} else {
 			System.out.println("next step");
-			solve(plan, C0);
+			return solve(plan, C0);
 		}
 	}
 

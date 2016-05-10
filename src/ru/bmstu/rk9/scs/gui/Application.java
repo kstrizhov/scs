@@ -22,18 +22,17 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import ru.bmstu.rk9.scs.lib.ExcelParser;
-import ru.bmstu.rk9.scs.lib.DBHolder;
-import ru.bmstu.rk9.scs.tp.Base;
-import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
-import ru.bmstu.rk9.scs.tp.Solver;
-import ru.bmstu.rk9.scs.tp.Producer;
-import ru.bmstu.rk9.scs.tp.Solver.Plan;
-
 import org.eclipse.swt.widgets.Text;
 
 import Jama.Matrix;
+import ru.bmstu.rk9.scs.lib.DBHolder;
+import ru.bmstu.rk9.scs.lib.ExcelParser;
+import ru.bmstu.rk9.scs.lib.Scheduler;
+import ru.bmstu.rk9.scs.tp.Base;
+import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
+import ru.bmstu.rk9.scs.tp.Producer;
+import ru.bmstu.rk9.scs.tp.Solver;
+import ru.bmstu.rk9.scs.tp.Solver.Plan;
 
 public class Application {
 
@@ -241,11 +240,13 @@ public class Application {
 				Plan plan = Solver.createBasicPlan(producersList, consumersList);
 
 				plan.X0.print(plan.X0.getColumnDimension(), 2);
+				
+				Matrix result;
 
 				if (isolatedC0 == null)
-					Solver.solve(plan, C0);
+					result = Solver.solve(plan, C0);
 				else
-					Solver.solve(plan, isolatedC0);
+					result = Solver.solve(plan, isolatedC0);
 			}
 		});
 		solveButton.setText("РЕШИТЬ");
@@ -325,6 +326,16 @@ public class Application {
 
 		MenuItem howToUseMenuItem = new MenuItem(helpMenu, SWT.NONE);
 		howToUseMenuItem.setText("How to use");
+		
+		MenuItem solveTestMenuItem = new MenuItem(helpMenu, SWT.NONE);
+		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Scheduler scheduler = new Scheduler();
+				scheduler.schedule();
+			}
+		});
+		solveTestMenuItem.setText("SOLVE TEST");
 
 	}
 }
