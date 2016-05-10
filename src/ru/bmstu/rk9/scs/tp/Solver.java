@@ -17,12 +17,6 @@ public class Solver {
 
 		double cost = 0;
 
-		System.out.println("MATRIX C");
-		C.print(C.getColumnDimension(), 2);
-
-		System.out.println("MATRIX X");
-		X.print(X.getColumnDimension(), 2);
-
 		for (int i = 0; i < numOfRows; i++)
 			for (int j = 0; j < numOfColumns; j++)
 				cost += C.get(i, j) * X.get(i, j);
@@ -94,8 +88,6 @@ public class Solver {
 	public static Matrix solve(Plan plan, Matrix C0) {
 
 		Matrix X0 = plan.X0;
-
-		printResult(X0, C0);
 
 		PotentialVectorItem p = getPotentialVector(plan.basis, C0);
 

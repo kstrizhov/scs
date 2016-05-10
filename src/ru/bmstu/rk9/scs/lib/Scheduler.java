@@ -64,9 +64,6 @@ public class Scheduler {
 					C0.set(i1, j - 1, value);
 				}
 
-			System.out.println("~~~ SUBMATRIX C ~~~");
-			C0.print(C0.getColumnDimension(), 2);
-
 			Matrix isolatedC0 = Solver.isolateTransportationProblem(producers, currentConsumers, C0);
 
 			Plan plan = Solver.createBasicPlan(producers, currentConsumers);
@@ -77,9 +74,6 @@ public class Scheduler {
 				result = Solver.solve(plan, C0);
 			else
 				result = Solver.solve(plan, isolatedC0);
-			
-			System.out.println("RESULT");
-			result.print(result.getColumnDimension(), 2);
 
 			System.out.println("MONTH: " + Month.of(i));
 		}
