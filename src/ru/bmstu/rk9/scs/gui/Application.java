@@ -196,6 +196,26 @@ public class Application {
 		enterEpsilonText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
 		Button enterEpsilonButton = new Button(roadMetalTabComposite, SWT.NONE);
+		enterEpsilonButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double eps = Double.parseDouble(enterEpsilonText.getText());
+				DBHolder.getInstance().getDatabase().setEps(eps);
+
+				ArrayList<ConsumptionPoint> consumers = DBHolder.getInstance().getDatabase().getConsumersList();
+				for (ConsumptionPoint c : consumers) {
+					double currentConsumption = c.getConsumption();
+					c.setConsumption(currentConsumption + eps);
+				}
+
+				ArrayList<Producer> producers = DBHolder.getInstance().getDatabase().getProducersList();
+				int numOfProducers = producers.size();
+				double lastProducersProduction = producers.get(numOfProducers - 1).getProduction();
+				int numOfConsumers = consumers.size();
+				producers.get(numOfProducers - 1).setProduction(lastProducersProduction + eps * numOfConsumers);
+
+			}
+		});
 		enterEpsilonButton.setEnabled(false);
 		enterEpsilonButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		enterEpsilonButton.setText("Задать");
@@ -240,7 +260,7 @@ public class Application {
 				Plan plan = Solver.createBasicPlan(producersList, consumersList);
 
 				plan.X0.print(plan.X0.getColumnDimension(), 2);
-				
+
 				Matrix result;
 
 				if (isolatedC0 == null)
@@ -326,7 +346,7 @@ public class Application {
 
 		MenuItem howToUseMenuItem = new MenuItem(helpMenu, SWT.NONE);
 		howToUseMenuItem.setText("How to use");
-		
+
 		MenuItem solveTestMenuItem = new MenuItem(helpMenu, SWT.NONE);
 		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
