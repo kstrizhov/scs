@@ -1,5 +1,7 @@
 package ru.bmstu.rk9.scs.tp;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -524,33 +526,50 @@ public class Solver {
 		return StringState.SCRATCH_OUT;
 	}
 
-	private static void checkBasicPlan(Plan plan, ArrayList<Producer> producers,
-			ArrayList<ConsumptionPoint> consumers) {
+	public static void checkBasicPlan(Plan plan, List<Producer> producers, List<ConsumptionPoint> consumers)
+			throws Exception {
 		int numOfRows = plan.X0.getRowDimension();
 		int numOfColumns = plan.X0.getColumnDimension();
 
-		double rowSum = 0;
-		double columnSum = 0;
-
 		for (int i = 0; i < numOfRows; i++) {
-			for (int j = 0; j < numOfColumns; j++) {
+			double rowSum = 0;
+			for (int j = 0; j < numOfColumns; j++)
 				rowSum += plan.X0.get(i, j);
-			}
-			if (rowSum != producers.get(i).getProduction()) {
-				System.out.println(
+			
+			double roundedSum = new BigDecimal(rowSum).setScale(3, RoundingMode.UP).doubleValue();
+			double roundedProduction = new BigDecimal(producers.get(i).getProduction()).setScale(3, RoundingMode.UP).doubleValue();
+			
+			if (roundedSum != roundedProduction) {
+				System.err.println("producer[" + i + "] prod: " + producers.get(i).getProduction());
+				System.err.println("rowSum: " + rowSum);
+				for (int i1 = 0; i1 < plan.X0.getRowDimension(); i1++) {
+					for (int j = 0; j < plan.X0.getColumnDimension(); j++)
+						System.err.print(plan.X0.get(i1, j) + "  ");
+					System.err.println("");
+				}
+				throw new Exception(
 						"Basic plan is not correct: row " + i + " sum is not equal to producers[" + i + "] production");
-				return;
 			}
 		}
 
 		for (int j = 0; j < numOfColumns; j++) {
-			for (int i = 0; i < numOfRows; i++) {
+			double columnSum = 0;
+			for (int i = 0; i < numOfRows; i++) 
 				columnSum += plan.X0.get(i, j);
-			}
-			if (columnSum != consumers.get(j).getConsumption()) {
-				System.out.println("Basic plan is not correct: column " + j + " sum is not equal to consumers[" + j
+			
+			double roundedSum = new BigDecimal(columnSum).setScale(3, RoundingMode.UP).doubleValue();
+			double roundedConsumption = new BigDecimal(consumers.get(j).getConsumption()).setScale(3, RoundingMode.UP).doubleValue();
+			
+			if (roundedSum != roundedConsumption) {
+				System.err.println("consumer[" + j + "] cons: " + consumers.get(j).getConsumption());
+				System.err.println("columnSum: " + columnSum);
+				for (int i = 0; i < plan.X0.getRowDimension(); i++) {
+					for (int j1 = 0; j1 < plan.X0.getColumnDimension(); j1++)
+						System.err.print(plan.X0.get(i, j1) + "  ");
+					System.err.println("");
+				}
+				throw new Exception("Basic plan is not correct: column " + j + " sum is not equal to consumers[" + j
 						+ "] consumption");
-				return;
 			}
 		}
 
