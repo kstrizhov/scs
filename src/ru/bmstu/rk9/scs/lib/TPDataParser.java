@@ -19,7 +19,7 @@ import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 
-public class ExcelParser {
+public class TPDataParser {
 
 	private final static int initialIndex = -1;
 	private final static int neededSheetIndex = 0;
@@ -210,8 +210,8 @@ public class ExcelParser {
 
 	public static Matrix parseProdConsDistanceMatrixExcelFile(String filePath) {
 
-		int numOfProducers = DBHolder.getInstance().getDatabase().getProducersList().size();
-		int numOfConsumers = DBHolder.getInstance().getDatabase().getConsumersList().size();
+		int numOfProducers = DBHolder.getInstance().getTPDatabase().getProducersList().size();
+		int numOfConsumers = DBHolder.getInstance().getTPDatabase().getConsumersList().size();
 
 		Matrix prodsConsDistanceMatrix = new Matrix(numOfProducers, numOfConsumers);
 
@@ -241,8 +241,8 @@ public class ExcelParser {
 
 	public static Matrix parseProdBasesDistanceMatrixExcelFile(String filePath) {
 
-		int numOfProducers = DBHolder.getInstance().getDatabase().getProducersList().size();
-		int numOfBases = DBHolder.getInstance().getDatabase().getBasesList().size();
+		int numOfProducers = DBHolder.getInstance().getTPDatabase().getProducersList().size();
+		int numOfBases = DBHolder.getInstance().getTPDatabase().getBasesList().size();
 
 		Matrix prodsBasesDistanceMatrix = new Matrix(numOfProducers, numOfBases);
 
@@ -272,8 +272,8 @@ public class ExcelParser {
 
 	public static Matrix parseBasesConsDistanceMatrixExcelFile(String filePath) {
 
-		int numOfBases = DBHolder.getInstance().getDatabase().getBasesList().size();
-		int numOfConsumers = DBHolder.getInstance().getDatabase().getConsumersList().size();
+		int numOfBases = DBHolder.getInstance().getTPDatabase().getBasesList().size();
+		int numOfConsumers = DBHolder.getInstance().getTPDatabase().getConsumersList().size();
 
 		Matrix basesConsDistanceMatrix = new Matrix(numOfBases, numOfConsumers);
 

@@ -10,7 +10,7 @@ import ru.bmstu.rk9.scs.tp.Point.Type;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
 
-public class Scheduler {
+public class TPScheduler {
 
 	private class ScheduleItem {
 		Month month;
@@ -32,7 +32,7 @@ public class Scheduler {
 	private ArrayList<ScheduleItem> consumersSuppliesList;
 	private ArrayList<ScheduleItem> basesSuppliesList;
 
-	public Scheduler(Database db) {
+	public TPScheduler(TPDatabase db) {
 
 		this.producersList = new ArrayList<Producer>();
 		this.consumersList = new ArrayList<ConsumptionPoint>();
@@ -87,7 +87,7 @@ public class Scheduler {
 				System.out.println("cons[" + c.getId() + "]: " + c.getConsumption());
 			System.out.println("");
 
-			double eps = DBHolder.getInstance().getDatabase().getEps();
+			double eps = DBHolder.getInstance().getTPDatabase().getEps();
 			addEpsToProdsAndCons(eps, producers, currentConsumers);
 
 			System.out.println("AFTER EPS");

@@ -7,7 +7,7 @@ import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 
-public class Database {
+public class TPDatabase {
 
 	private ArrayList<Producer> producersList;
 	private ArrayList<ConsumptionPoint> consumersList;

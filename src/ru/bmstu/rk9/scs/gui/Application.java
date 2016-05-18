@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -26,17 +27,27 @@ import org.eclipse.swt.widgets.Text;
 
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
-import ru.bmstu.rk9.scs.lib.ExcelParser;
-import ru.bmstu.rk9.scs.lib.Scheduler;
+import ru.bmstu.rk9.scs.lib.TPDataParser;
+import ru.bmstu.rk9.scs.lib.TPScheduler;
 import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
+import ru.bmstu.rk9.scs.whnet.Calculator;
+import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
+import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
 
 public class Application {
 
 	protected Shell shell;
 	private Text enterEpsilonText;
+	private Text setC3Text;
+	private Text setC2Text;
+	private Text setC1Text;
+	private Text setCs1Text;
+	private Text setCs2Text;
+	private Text setCs3Text;
+	private Text timePeriodText;
 
 	/**
 	 * Launch the application.
@@ -73,12 +84,12 @@ public class Application {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setText("Система управления запасами складского комплекса РЖД");
-		shell.setSize(800, 600);
+		shell.setSize(800, 680);
 		shell.setLayout(new FormLayout());
 
 		TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
 		FormData fd_tabFolder = new FormData();
-		fd_tabFolder.bottom = new FormAttachment(0, 571);
+		fd_tabFolder.bottom = new FormAttachment(0, 651);
 		fd_tabFolder.right = new FormAttachment(0, 794);
 		fd_tabFolder.top = new FormAttachment(0);
 		fd_tabFolder.left = new FormAttachment(0);
@@ -109,7 +120,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				DBHolder.getInstance().getDatabase().setProducersList(ExcelParser.parseProducersExcelFile(selected));
+				DBHolder.getInstance().getTPDatabase().setProducersList(TPDataParser.parseProducersExcelFile(selected));
 			}
 		});
 		loadProducersInfoButton.setText("Загрузить [..]");
@@ -127,7 +138,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				DBHolder.getInstance().getDatabase().setConsumersList(ExcelParser.parseConsumersExcelFile(selected));
+				DBHolder.getInstance().getTPDatabase().setConsumersList(TPDataParser.parseConsumersExcelFile(selected));
 			}
 		});
 		loadConsumersInfoButton.setText("Загрузить [..]");
@@ -145,7 +156,7 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				DBHolder.getInstance().getDatabase().setBasesList(ExcelParser.parseBasesExcelFile(selected));
+				DBHolder.getInstance().getTPDatabase().setBasesList(TPDataParser.parseBasesExcelFile(selected));
 			}
 		});
 		loadBasesInfoButton.setText("Загрузить [..]");
@@ -163,8 +174,8 @@ public class Application {
 				String[] filterExtensions = { "*.xls" };
 				fileDialog.setFilterExtensions(filterExtensions);
 				String selected = fileDialog.open();
-				DBHolder.getInstance().getDatabase()
-						.setProdsConsDistanceMatrix(ExcelParser.parseProdConsDistanceMatrixExcelFile(selected));
+				DBHolder.getInstance().getTPDatabase()
+						.setProdsConsDistanceMatrix(TPDataParser.parseProdConsDistanceMatrixExcelFile(selected));
 			}
 		});
 		loadProdsConsDistanceMatrixButton.setText("Загрузить [..]");
@@ -199,7 +210,7 @@ public class Application {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				double eps = Double.parseDouble(enterEpsilonText.getText());
-				DBHolder.getInstance().getDatabase().setEps(eps);
+				DBHolder.getInstance().getTPDatabase().setEps(eps);
 			}
 		});
 		enterEpsilonButton.setEnabled(false);
@@ -215,12 +226,12 @@ public class Application {
 					enterEpsilonLabel.setEnabled(true);
 					enterEpsilonText.setEnabled(true);
 					enterEpsilonButton.setEnabled(true);
-					DBHolder.getInstance().getDatabase().setEpsUsed(true);
+					DBHolder.getInstance().getTPDatabase().setEpsUsed(true);
 				} else {
 					enterEpsilonLabel.setEnabled(false);
 					enterEpsilonText.setEnabled(false);
 					enterEpsilonButton.setEnabled(false);
-					DBHolder.getInstance().getDatabase().setEpsUsed(false);
+					DBHolder.getInstance().getTPDatabase().setEpsUsed(false);
 				}
 			}
 		});
@@ -233,10 +244,10 @@ public class Application {
 		solveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				List<Producer> producersList = DBHolder.getInstance().getDatabase().getProducersList();
-				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getDatabase().getConsumersList();
+				List<Producer> producersList = DBHolder.getInstance().getTPDatabase().getProducersList();
+				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getTPDatabase().getConsumersList();
 
-				Matrix C0 = DBHolder.getInstance().getDatabase().getProdsConsDistanceMatrix();
+				Matrix C0 = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
 
 				Matrix solution = Solver.solve(producersList, consumersList, C0);
 			}
@@ -249,7 +260,278 @@ public class Application {
 
 		Composite warehouseNetTabComposite = new Composite(tabFolder, SWT.NONE);
 		warehouseNetTabItem.setControl(warehouseNetTabComposite);
-		warehouseNetTabComposite.setLayout(null);
+		GridLayout warehouseNetGridLayout = new GridLayout(3, false);
+		warehouseNetGridLayout.marginLeft = 10;
+		warehouseNetGridLayout.marginRight = 10;
+		warehouseNetGridLayout.horizontalSpacing = 15;
+		warehouseNetTabComposite.setLayout(warehouseNetGridLayout);
+
+		Label lblLoadwhnetlabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		lblLoadwhnetlabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblLoadwhnetlabel.setText("Зарузить информацию о складской сети");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button loadWHNetButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		loadWHNetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				WHNetDataParser.parseWarehousesData(selected);
+			}
+		});
+		loadWHNetButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		loadWHNetButton.setText("Загрузить [..]");
+
+		Label loadWHNetConsumersInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		loadWHNetConsumersInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		loadWHNetConsumersInfoLabel.setText("Загрузить информацию о потребителях");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button loadWHNetConsumersInfoButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		loadWHNetConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				WHNetDataParser.parseConsumersData(selected);
+			}
+		});
+		loadWHNetConsumersInfoButton.setText("Загрузить [..]");
+
+		Label loadTasksInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		loadTasksInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		loadTasksInfoLabel.setText("Загрузить информацию о проводимых работах потребителей");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button loadTasksInfoButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		loadTasksInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				WHNetDataParser.parseTasksFrequenciesData(selected);
+			}
+		});
+		loadTasksInfoButton.setText("Загрузить [..]");
+
+		Label loadTasksNormsInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		loadTasksNormsInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		loadTasksNormsInfoLabel.setText("Загрузить нормы материалов для проводимых работ");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button loadTasksNormsButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		loadTasksNormsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				WHNetDataParser.parseTasksResourceNormsData(selected);
+			}
+		});
+		loadTasksNormsButton.setText("Загрузить [..]");
+
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Label setC1Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setC1Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setC1Label.setText("Задать стоимость хранения продукции на складе 1 уровня");
+
+		setC1Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setC1Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setC1Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setC1Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double c1 = Double.parseDouble(setC1Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setC1(c1);
+			}
+		});
+		setC1Button.setText("Задать");
+
+		Label setC2Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setC2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setC2Label.setText("Задать стоимость хранения продукции на складе 2 уровня");
+
+		setC2Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setC2Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setC2Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setC2Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double c2 = Double.parseDouble(setC2Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setC2(c2);
+			}
+		});
+		setC2Button.setText("Задать");
+
+		Label setC3Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setC3Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setC3Label.setText("Задать стоимость хранения продукции на складе 3 уровня");
+
+		setC3Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setC3Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setC3Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setC3Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double c3 = Double.parseDouble(setC3Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setC3(c3);
+			}
+		});
+		setC3Button.setText("Задать");
+
+		Label setCs1Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setCs1Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setCs1Label.setText("Задать стоимость поставки партии продукции на склад 1 уровня");
+
+		setCs1Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setCs1Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setCs1Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setCs1Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double cs1 = Double.parseDouble(setCs1Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setCs1(cs1);
+			}
+		});
+		setCs1Button.setText("Задать");
+
+		Label setCs2Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setCs2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setCs2Label.setText("Задать стоимость поставки партии продукции на склад 2 уровня");
+
+		setCs2Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setCs2Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setCs2Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setCs2Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double cs2 = Double.parseDouble(setCs2Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setCs2(cs2);
+			}
+		});
+		setCs2Button.setText("Задать");
+
+		Label setCs3Label = new Label(warehouseNetTabComposite, SWT.NONE);
+		setCs3Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		setCs3Label.setText("Задать стоимость поставки партии продукции на склад 3 уровня");
+
+		setCs3Text = new Text(warehouseNetTabComposite, SWT.BORDER);
+		setCs3Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		Button setCs3Button = new Button(warehouseNetTabComposite, SWT.NONE);
+		setCs3Button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double cs3 = Double.parseDouble(setCs3Text.getText());
+				DBHolder.getInstance().getWHNetDatabase().setCs3(cs3);
+			}
+		});
+		setCs3Button.setText("Задать");
+
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		
+		Label timePeriodLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		timePeriodLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		timePeriodLabel.setText("Период времени T, мес.");
+		
+		timePeriodText = new Text(warehouseNetTabComposite, SWT.BORDER);
+		timePeriodText.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		
+		Button btnNewButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		btnNewButton.setText("Задать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Label chooseFirstLvlModelLaybel = new Label(warehouseNetTabComposite, SWT.NONE);
+		chooseFirstLvlModelLaybel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		chooseFirstLvlModelLaybel.setText("Используемая модель управления запасами");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Composite radioBtnnGroupsComposite = new Composite(warehouseNetTabComposite, SWT.NONE);
+		radioBtnnGroupsComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		radioBtnnGroupsComposite.setLayout(new GridLayout(3, false));
+
+		Group grpI = new Group(radioBtnnGroupsComposite, SWT.NONE);
+		grpI.setText(" I уровень");
+		grpI.setBounds(0, 0, 66, 66);
+		grpI.setLayout(new GridLayout(1, false));
+
+		Button firstLvlOneProdModelButton = new Button(grpI, SWT.RADIO);
+		firstLvlOneProdModelButton.setSelection(true);
+		firstLvlOneProdModelButton.setBounds(0, 0, 112, 22);
+		firstLvlOneProdModelButton.setText("Однопродукт.");
+
+		Button firstLvlMultiprodModelButton = new Button(grpI, SWT.RADIO);
+		firstLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
+		firstLvlMultiprodModelButton.setText("Многопродукт.");
+
+		Group grpII = new Group(radioBtnnGroupsComposite, SWT.NONE);
+		grpII.setText(" II уровень");
+		grpII.setBounds(0, 0, 66, 66);
+		grpII.setLayout(new GridLayout(1, false));
+
+		Button secondLvlOneProdModelButton = new Button(grpII, SWT.RADIO);
+		secondLvlOneProdModelButton.setSelection(true);
+		secondLvlOneProdModelButton.setBounds(0, 0, 112, 22);
+		secondLvlOneProdModelButton.setText("Однопродукт.");
+
+		Button secondLvlMultiprodModelButton = new Button(grpII, SWT.RADIO);
+		secondLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
+		secondLvlMultiprodModelButton.setText("Многопродукт.");
+
+		Group grpIII = new Group(radioBtnnGroupsComposite, SWT.NONE);
+		grpIII.setText(" III уровень");
+		grpIII.setBounds(0, 0, 66, 66);
+		grpIII.setLayout(new GridLayout(1, false));
+
+		Button thirdLvlOneProdModelButton = new Button(grpIII, SWT.RADIO);
+		thirdLvlOneProdModelButton.setSelection(true);
+		thirdLvlOneProdModelButton.setBounds(0, 0, 112, 22);
+		thirdLvlOneProdModelButton.setText("Однопродукт.");
+
+		Button thirdLvlMultiprodModelButton = new Button(grpIII, SWT.RADIO);
+		thirdLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
+		thirdLvlMultiprodModelButton.setText("Многопродукт.");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		
+				Button caclulcateWHNetButton = new Button(warehouseNetTabComposite, SWT.NONE);
+				caclulcateWHNetButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
+						Calculator.calculateWHNet(db);
+					}
+				});
+				caclulcateWHNetButton.setText("Рассчитать");
 
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuBar);
@@ -286,9 +568,9 @@ public class Application {
 		testMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<Producer> list = DBHolder.getInstance().getDatabase().getProducersList();
-				ArrayList<ConsumptionPoint> list2 = DBHolder.getInstance().getDatabase().getConsumersList();
-				ArrayList<Base> list3 = DBHolder.getInstance().getDatabase().getBasesList();
+				ArrayList<Producer> list = DBHolder.getInstance().getTPDatabase().getProducersList();
+				ArrayList<ConsumptionPoint> list2 = DBHolder.getInstance().getTPDatabase().getConsumersList();
+				ArrayList<Base> list3 = DBHolder.getInstance().getTPDatabase().getBasesList();
 				for (Producer p : list) {
 					System.out.println("id:" + p.getId());
 					System.out.println("name: " + p.getName());
@@ -307,7 +589,7 @@ public class Application {
 					System.out.println("name: " + b.getName());
 					System.out.println("volume: " + b.getVolume());
 				}
-				Matrix m = DBHolder.getInstance().getDatabase().getProdsConsDistanceMatrix();
+				Matrix m = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
 				m.print(m.getColumnDimension(), 2);
 			}
 		});
@@ -323,7 +605,7 @@ public class Application {
 		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getDatabase());
+				TPScheduler scheduler = new TPScheduler(DBHolder.getInstance().getTPDatabase());
 				scheduler.schedule();
 			}
 		});
