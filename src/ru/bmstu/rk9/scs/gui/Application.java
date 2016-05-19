@@ -36,6 +36,7 @@ import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
+import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
 
 public class Application {
 
@@ -44,9 +45,6 @@ public class Application {
 	private Text setC3Text;
 	private Text setC2Text;
 	private Text setC1Text;
-	private Text setCs1Text;
-	private Text setCs2Text;
-	private Text setCs3Text;
 	private Text timePeriodText;
 
 	/**
@@ -275,12 +273,13 @@ public class Application {
 		loadWHNetButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
+//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+//				fileDialog.setText("Open");
+//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+//				String[] filterExtensions = { "*.xls" };
+//				fileDialog.setFilterExtensions(filterExtensions);
+//				String selected = fileDialog.open();
+				String selected = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
 				WHNetDataParser.parseWarehousesData(selected);
 			}
 		});
@@ -296,12 +295,13 @@ public class Application {
 		loadWHNetConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
+//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+//				fileDialog.setText("Open");
+//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+//				String[] filterExtensions = { "*.xls" };
+//				fileDialog.setFilterExtensions(filterExtensions);
+//				String selected = fileDialog.open();
+				String selected = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
 				WHNetDataParser.parseConsumersData(selected);
 			}
 		});
@@ -316,12 +316,13 @@ public class Application {
 		loadTasksInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
+//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+//				fileDialog.setText("Open");
+//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+//				String[] filterExtensions = { "*.xls" };
+//				fileDialog.setFilterExtensions(filterExtensions);
+//				String selected = fileDialog.open();
+				String selected = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
 				WHNetDataParser.parseTasksFrequenciesData(selected);
 			}
 		});
@@ -336,16 +337,38 @@ public class Application {
 		loadTasksNormsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
+//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+//				fileDialog.setText("Open");
+//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+//				String[] filterExtensions = { "*.xls" };
+//				fileDialog.setFilterExtensions(filterExtensions);
+//				String selected = fileDialog.open();
+				String selected = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
 				WHNetDataParser.parseTasksResourceNormsData(selected);
 			}
 		});
 		loadTasksNormsButton.setText("Загрузить [..]");
+		
+		Label loadResourcesInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		loadResourcesInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		loadResourcesInfoLabel.setText("Загрузить информацию о поставляемых материалах");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		
+		Button loadResourcesInfoButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		loadResourcesInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+//				fileDialog.setText("Open");
+//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+//				String[] filterExtensions = { "*.xls" };
+//				fileDialog.setFilterExtensions(filterExtensions);
+//				String selected = fileDialog.open();
+				String selected = "/home/kirill/diplom_info/data/wh_net/resources.xls";
+				WHNetDataParser.parseResourcesData(selected);
+			}
+		});
+		loadResourcesInfoButton.setText("Загрузить [..]");
 
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -402,57 +425,6 @@ public class Application {
 		});
 		setC3Button.setText("Задать");
 
-		Label setCs1Label = new Label(warehouseNetTabComposite, SWT.NONE);
-		setCs1Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		setCs1Label.setText("Задать стоимость поставки партии продукции на склад 1 уровня");
-
-		setCs1Text = new Text(warehouseNetTabComposite, SWT.BORDER);
-		setCs1Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-
-		Button setCs1Button = new Button(warehouseNetTabComposite, SWT.NONE);
-		setCs1Button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				double cs1 = Double.parseDouble(setCs1Text.getText());
-				DBHolder.getInstance().getWHNetDatabase().setCs1(cs1);
-			}
-		});
-		setCs1Button.setText("Задать");
-
-		Label setCs2Label = new Label(warehouseNetTabComposite, SWT.NONE);
-		setCs2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		setCs2Label.setText("Задать стоимость поставки партии продукции на склад 2 уровня");
-
-		setCs2Text = new Text(warehouseNetTabComposite, SWT.BORDER);
-		setCs2Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-
-		Button setCs2Button = new Button(warehouseNetTabComposite, SWT.NONE);
-		setCs2Button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				double cs2 = Double.parseDouble(setCs2Text.getText());
-				DBHolder.getInstance().getWHNetDatabase().setCs2(cs2);
-			}
-		});
-		setCs2Button.setText("Задать");
-
-		Label setCs3Label = new Label(warehouseNetTabComposite, SWT.NONE);
-		setCs3Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		setCs3Label.setText("Задать стоимость поставки партии продукции на склад 3 уровня");
-
-		setCs3Text = new Text(warehouseNetTabComposite, SWT.BORDER);
-		setCs3Text.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-
-		Button setCs3Button = new Button(warehouseNetTabComposite, SWT.NONE);
-		setCs3Button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				double cs3 = Double.parseDouble(setCs3Text.getText());
-				DBHolder.getInstance().getWHNetDatabase().setCs3(cs3);
-			}
-		});
-		setCs3Button.setText("Задать");
-
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -486,11 +458,23 @@ public class Application {
 		grpI.setLayout(new GridLayout(1, false));
 
 		Button firstLvlOneProdModelButton = new Button(grpI, SWT.RADIO);
+		firstLvlOneProdModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setFirstLvlSolveModelType(SolveModelType.SINGLEPRODUCT);
+			}
+		});
 		firstLvlOneProdModelButton.setSelection(true);
 		firstLvlOneProdModelButton.setBounds(0, 0, 112, 22);
 		firstLvlOneProdModelButton.setText("Однопродукт.");
 
 		Button firstLvlMultiprodModelButton = new Button(grpI, SWT.RADIO);
+		firstLvlMultiprodModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setFirstLvlSolveModelType(SolveModelType.MULTIPRODUCT);
+			}
+		});
 		firstLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
 		firstLvlMultiprodModelButton.setText("Многопродукт.");
 
@@ -500,11 +484,23 @@ public class Application {
 		grpII.setLayout(new GridLayout(1, false));
 
 		Button secondLvlOneProdModelButton = new Button(grpII, SWT.RADIO);
+		secondLvlOneProdModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setSecondLvlSolveModelType(SolveModelType.SINGLEPRODUCT);
+			}
+		});
 		secondLvlOneProdModelButton.setSelection(true);
 		secondLvlOneProdModelButton.setBounds(0, 0, 112, 22);
 		secondLvlOneProdModelButton.setText("Однопродукт.");
 
 		Button secondLvlMultiprodModelButton = new Button(grpII, SWT.RADIO);
+		secondLvlMultiprodModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setSecondLvlSolveModelType(SolveModelType.MULTIPRODUCT);
+			}
+		});
 		secondLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
 		secondLvlMultiprodModelButton.setText("Многопродукт.");
 
@@ -514,11 +510,23 @@ public class Application {
 		grpIII.setLayout(new GridLayout(1, false));
 
 		Button thirdLvlOneProdModelButton = new Button(grpIII, SWT.RADIO);
+		thirdLvlOneProdModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setThirdLvlSolveModelType(SolveModelType.SINGLEPRODUCT);
+			}
+		});
 		thirdLvlOneProdModelButton.setSelection(true);
 		thirdLvlOneProdModelButton.setBounds(0, 0, 112, 22);
 		thirdLvlOneProdModelButton.setText("Однопродукт.");
 
 		Button thirdLvlMultiprodModelButton = new Button(grpIII, SWT.RADIO);
+		thirdLvlMultiprodModelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().setThirdLvlSolveModelType(SolveModelType.MULTIPRODUCT);
+			}
+		});
 		thirdLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
 		thirdLvlMultiprodModelButton.setText("Многопродукт.");
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -529,6 +537,7 @@ public class Application {
 					public void widgetSelected(SelectionEvent e) {
 						WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
 						Calculator.calculateWHNet(db);
+						db.clear();
 					}
 				});
 				caclulcateWHNetButton.setText("Рассчитать");
@@ -610,6 +619,46 @@ public class Application {
 			}
 		});
 		solveTestMenuItem.setText("SOLVE TEST");
+
+		MenuItem loadNetDataMenuItem = new MenuItem(helpMenu, SWT.NONE);
+		loadNetDataMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+//				String s1 = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
+//				WHNetDataParser.parseWarehousesData(s1);
+//				String s2 = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
+//				WHNetDataParser.parseConsumersData(s2);
+//				String s3 = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
+//				WHNetDataParser.parseTasksFrequenciesData(s3);
+//				String s4 = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
+//				WHNetDataParser.parseTasksResourceNormsData(s4);
+//				String s5 = "/home/kirill/diplom_info/data/wh_net/resources.xls";
+//				WHNetDataParser.parseResourcesData(s5);
+//				
+//				String s1 = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
+//				WHNetDataParser.parseWarehousesData(s1);
+//				String s2 = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
+//				WHNetDataParser.parseConsumersData(s2);
+//				String s3 = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
+//				WHNetDataParser.parseTasksFrequenciesData(s3);
+//				String s4 = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
+//				WHNetDataParser.parseTasksResourceNormsData(s4);
+//				String s5 = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
+//				WHNetDataParser.parseResourcesData(s5);
+				
+				String s1 = "/home/kirill/diplom_info/data/data_whnet/whnet.xls";
+				WHNetDataParser.parseWarehousesData(s1);
+				String s2 = "/home/kirill/diplom_info/data/data_whnet/consumers.xls";
+				WHNetDataParser.parseConsumersData(s2);
+				String s3 = "/home/kirill/diplom_info/data/data_whnet/task_freq.xls";
+				WHNetDataParser.parseTasksFrequenciesData(s3);
+				String s4 = "/home/kirill/diplom_info/data/data_whnet/res_norms.xls";
+				WHNetDataParser.parseTasksResourceNormsData(s4);
+				String s5 = "/home/kirill/diplom_info/data/data_whnet/resources.xls";
+				WHNetDataParser.parseResourcesData(s5);
+			}
+		});
+		loadNetDataMenuItem.setText("LOAD NET DATA");
 
 	}
 }

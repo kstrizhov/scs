@@ -36,6 +36,7 @@ public class WHNetDataParser {
 			int nameColumnIndex = initialIndex;
 			int volumeColumnIndex = initialIndex;
 			int parentIdColumnIndex = initialIndex;
+			int csIdColumnIndex = initialIndex;
 
 			Row headRow = sheet.getRow(0);
 			Iterator<Cell> headRowIterator = headRow.cellIterator();
@@ -50,6 +51,8 @@ public class WHNetDataParser {
 					volumeColumnIndex = cell.getColumnIndex();
 				if (cell.getStringCellValue().equals("parent_id"))
 					parentIdColumnIndex = cell.getColumnIndex();
+				if (cell.getStringCellValue().equals("cs"))
+					csIdColumnIndex = cell.getColumnIndex();
 			}
 
 			Iterator<Row> rowIterator = sheet.iterator();
@@ -62,7 +65,8 @@ public class WHNetDataParser {
 					String name = row.getCell(nameColumnIndex).getStringCellValue();
 					double volume = row.getCell(volumeColumnIndex).getNumericCellValue();
 					int parentID = (int) row.getCell(parentIdColumnIndex).getNumericCellValue();
-					whNetMap.put(id, new Warehouse(id, name, volume, parentID));
+					double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
+					whNetMap.put(id, new Warehouse(id, name, volume, parentID, Cs));
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
 					break;
@@ -235,7 +239,7 @@ public class WHNetDataParser {
 			Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().resourcesMap;
 
 			for (int i = 1; i <= numOfResources; i++) {
-				resourcesMap.put(i, new Resource(i, "resource" + i));
+				resourcesMap.put(i, new Resource(i));
 			}
 
 			Map<Integer, Task> tasksMap = DBHolder.getInstance().getWHNetDatabase().tasksMap;
@@ -256,5 +260,84 @@ public class WHNetDataParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void parseResourcesData(String filePath) {
+
+		Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().getResourcesMap();
+
+		Map<Integer, Supplier> suppliersMap = new HashMap<>();
+
+		Map<Integer, Integer> resourcesSuppliersMap = new HashMap<>();
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+			Workbook workBook = new HSSFWorkbook(fileInputStream);
+			Sheet sheet = workBook.getSheetAt(neededSheetIndex);
+
+			int idColumnIndex = initialIndex;
+			int nameColumnIndex = initialIndex;
+			int volumePerUnitColumnIndex = initialIndex;
+			int supplierIDColumnIndex = initialIndex;
+			int csIdColumnIndex = initialIndex;
+
+			Row headRow = sheet.getRow(0);
+			Iterator<Cell> headRowIterator = headRow.cellIterator();
+
+			while (headRowIterator.hasNext()) {
+				Cell cell = headRowIterator.next();
+				if (cell.getStringCellValue().equals("id"))
+					idColumnIndex = cell.getColumnIndex();
+				if (cell.getStringCellValue().equals("name"))
+					nameColumnIndex = cell.getColumnIndex();
+				if (cell.getStringCellValue().equals("volume_per_unit"))
+					volumePerUnitColumnIndex = cell.getColumnIndex();
+				if (cell.getStringCellValue().equals("supplier_id"))
+					supplierIDColumnIndex = cell.getColumnIndex();
+				if (cell.getStringCellValue().equals("cs"))
+					csIdColumnIndex = cell.getColumnIndex();
+			}
+
+			Iterator<Row> rowIterator = sheet.iterator();
+			rowIterator.next();
+
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				try {
+					int id = (int) row.getCell(idColumnIndex).getNumericCellValue();
+					String name = row.getCell(nameColumnIndex).getStringCellValue();
+					double volumePerUnit = row.getCell(volumePerUnitColumnIndex).getNumericCellValue();
+					int supplierID = (int) row.getCell(supplierIDColumnIndex).getNumericCellValue();
+					double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
+
+					resourcesMap.get(id).name = name;
+					resourcesMap.get(id).volumePerUnit = volumePerUnit;
+					resourcesMap.get(id).supplierID = supplierID;
+					resourcesMap.get(id).Cs = Cs;
+
+					if (!suppliersMap.containsKey(supplierID)) {
+						Supplier supplier = new Supplier(supplierID, "supplier" + supplierID);
+						supplier.suppliedResources.add(resourcesMap.get(id));
+						suppliersMap.put(supplierID, supplier);
+					} else
+						suppliersMap.get(supplierID).suppliedResources.add(resourcesMap.get(id));
+
+					resourcesSuppliersMap.put(id, supplierID);
+				} catch (Exception e) {
+					System.err.println("Error: " + e.getMessage());
+					e.printStackTrace();
+					break;
+				}
+			}
+			workBook.close();
+			fileInputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		DBHolder.getInstance().getWHNetDatabase().suppliersMap = suppliersMap;
+		DBHolder.getInstance().getWHNetDatabase().resourcesSuppliersMap = resourcesSuppliersMap;
 	}
 }

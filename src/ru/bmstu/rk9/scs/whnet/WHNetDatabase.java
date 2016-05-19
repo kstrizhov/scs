@@ -19,15 +19,22 @@ public class WHNetDatabase {
 
 	protected Map<Integer, Resource> resourcesMap;
 
+	protected Map<Integer, Supplier> suppliersMap;
+	protected Map<Integer, Integer> resourcesSuppliersMap;
+
 	protected double c1 = 100;
 	protected double c2 = 500;
 	protected double c3 = 1000;
 
-	protected double cs1 = 10000;
-	protected double cs2 = 5000;
-	protected double cs3 = 1000;
-	
 	protected double T = 2;
+
+	public enum SolveModelType {
+		SINGLEPRODUCT, MULTIPRODUCT
+	}
+
+	protected SolveModelType firstLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
+	protected SolveModelType secondLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
+	protected SolveModelType thirdLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 
 	public WHNetDatabase() {
 		this.whNetMap = new HashMap<Integer, Warehouse>();
@@ -37,6 +44,8 @@ public class WHNetDatabase {
 		this.consumersMap = new HashMap<Integer, Consumer>();
 		this.tasksMap = new HashMap<Integer, Task>();
 		this.resourcesMap = new HashMap<Integer, Resource>();
+		this.suppliersMap = new HashMap<>();
+		this.resourcesSuppliersMap = new HashMap<>();
 	}
 
 	public Map<Integer, Consumer> getConsumersMap() {
@@ -63,19 +72,31 @@ public class WHNetDatabase {
 		this.c3 = c3;
 	}
 
-	public void setCs1(double cs1) {
-		this.cs1 = cs1;
-	}
-
-	public void setCs2(double cs2) {
-		this.cs2 = cs2;
-	}
-
-	public void setCs3(double cs3) {
-		this.cs3 = cs3;
-	}
-	
 	public void setTimePeriod(double T) {
 		this.T = T;
+	}
+
+	public void setFirstLvlSolveModelType(SolveModelType firstLvlSolveModelType) {
+		this.firstLvlSolveModelType = firstLvlSolveModelType;
+	}
+
+	public void setSecondLvlSolveModelType(SolveModelType secondLvlSolveModelType) {
+		this.secondLvlSolveModelType = secondLvlSolveModelType;
+	}
+
+	public void setThirdLvlSolveModelType(SolveModelType thirdLvlSolveModelType) {
+		this.thirdLvlSolveModelType = thirdLvlSolveModelType;
+	}
+
+	public void clear() {
+		this.whNetMap = new HashMap<Integer, Warehouse>();
+		this.firstLevelWarehousesIDList = new ArrayList<Integer>();
+		this.secondLevelWarehousesIDList = new ArrayList<Integer>();
+		this.thirdLevelWarehousesIDList = new ArrayList<Integer>();
+		this.consumersMap = new HashMap<Integer, Consumer>();
+		this.tasksMap = new HashMap<Integer, Task>();
+		this.resourcesMap = new HashMap<Integer, Resource>();
+		this.suppliersMap = new HashMap<>();
+		this.resourcesSuppliersMap = new HashMap<>();
 	}
 }

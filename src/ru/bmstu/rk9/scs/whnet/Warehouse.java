@@ -10,6 +10,8 @@ public class Warehouse {
 	protected String name;
 	protected double volume;
 	protected int parentID;
+	protected double Cs;
+
 	protected List<Integer> childrensIDList = new ArrayList<Integer>();
 	protected List<Consumer> consumersList = new ArrayList<Consumer>();
 
@@ -21,11 +23,12 @@ public class Warehouse {
 
 	protected WHLevel level;
 
-	public Warehouse(int id, String name, double volume, int parentID) {
+	public Warehouse(int id, String name, double volume, int parentID, double Cs) {
 		this.id = id;
 		this.name = name;
 		this.volume = volume;
 		this.parentID = parentID;
+		this.Cs = Cs;
 	}
 
 	public void print() {

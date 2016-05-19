@@ -19,6 +19,7 @@ public class Calculator {
 	}
 
 	public static void calculateWHNet(WHNetDatabase db) {
+
 		Map<Integer, Warehouse> whNetMap = db.whNetMap;
 		Map<Integer, Resource> resourcesMap = db.resourcesMap;
 
@@ -42,24 +43,25 @@ public class Calculator {
 			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.childrensIDList, resourcesMap);
 		}
 
-		Map<Integer, Map<Integer, ResultItem>> calcResultsMap = new HashMap<>();
+		Map<Integer, Map<Integer, ResultItem>> calcResultsMap = new HashMap<>(); // maps results for
+																					// each wh to wh
+																					// id
 
 		double c1 = db.c1;
 		double c2 = db.c2;
 		double c3 = db.c3;
-		double cs1 = db.cs1;
-		double cs2 = db.cs2;
-		double cs3 = db.cs3;
 
 		double T = db.T;
 
 		for (Warehouse w : whNetMap.values()) {
 
-			Map<Integer, ResultItem> resourceResultsMap = new HashMap<>();
+			Map<Integer, ResultItem> resourceResultsMap = new HashMap<>(); // maps results for each
+																			// resource to resource
+																			// id
 
-			for (Resource r : resourcesMap.values()) {
+			for (Resource resource : resourcesMap.values()) {
 
-				double R = w.resourceIDsDemandsMap.get(r.id);
+				double R = w.resourceIDsDemandsMap.get(resource.id);
 
 				double q0 = -1;
 				double ts0 = -1;
@@ -67,23 +69,120 @@ public class Calculator {
 
 				switch (w.level) {
 				case FIRST:
-					q0 = calculateSingleProductQ0(R, cs1, T, c1);
-					ts0 = caclulateSingleProductTs0(R, cs1, T, c1);
-					d0 = caclulateSingleProductCostFunc(R, cs1, T, c1);
+					switch (db.firstLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						double C1 = calculateResourceStoringCost(c1, resource.volumePerUnit);
+
+						q0 = calculateSingleProductQ0(R, resource.Cs, T, C1);
+						ts0 = calculateSingleProductTs0(R, resource.Cs, T, C1);
+						d0 = calculateSingleProductCostFunc(R, resource.Cs, T, C1);
+						break;
+					case MULTIPRODUCT:
+						double r = R / T;
+						double Cs = resource.Cs;
+
+						double denominatror = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							if (resource.supplierID != resourcesMap.get(i).supplierID)
+								continue;
+							double c_i = calculateResourceStoringCost(c1, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							denominatror += c_i * r_i;
+						}
+
+						ts0 = calculateMultiProductTs0(Cs, denominatror);
+						q0 = r * ts0;
+
+						double storageCost = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							if (resource.supplierID != resourcesMap.get(i).supplierID)
+								continue;
+							double c_i = calculateResourceStoringCost(c1, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							storageCost += (c_i * r_i * ts0 * T) / 2;
+						}
+
+						double supplyCost = Cs * T / ts0;
+
+						d0 = storageCost + supplyCost;
+						break;
+					}
 					break;
 				case SECOND:
-					q0 = calculateSingleProductQ0(R, cs2, T, c2);
-					ts0 = caclulateSingleProductTs0(R, cs2, T, c2);
-					d0 = caclulateSingleProductCostFunc(R, cs2, T, c2);
+					switch (db.secondLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						double C2 = calculateResourceStoringCost(c2, resource.volumePerUnit);
+
+						q0 = calculateSingleProductQ0(R, w.Cs, T, C2);
+						ts0 = calculateSingleProductTs0(R, w.Cs, T, C2);
+						d0 = calculateSingleProductCostFunc(R, w.Cs, T, C2);
+						break;
+					case MULTIPRODUCT:
+						double r = R / T;
+						double Cs = w.Cs;
+
+						double denominatror = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							double c_i = calculateResourceStoringCost(c2, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							denominatror += c_i * r_i;
+						}
+
+						ts0 = calculateMultiProductTs0(Cs, denominatror);
+						q0 = r * ts0;
+
+						double storageCost = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							double c_i = calculateResourceStoringCost(c2, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							storageCost += (c_i * r_i * ts0 * T) / 2;
+						}
+
+						double supplyCost = Cs * T / ts0;
+
+						d0 = storageCost + supplyCost;
+						break;
+					}
 					break;
 				case THIRD:
-					q0 = calculateSingleProductQ0(R, cs3, T, c3);
-					ts0 = caclulateSingleProductTs0(R, cs3, T, c3);
-					d0 = caclulateSingleProductCostFunc(R, cs3, T, c3);
+					switch (db.thirdLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						double C3 = calculateResourceStoringCost(c3, resource.volumePerUnit);
+
+						q0 = calculateSingleProductQ0(R, w.Cs, T, C3);
+						ts0 = calculateSingleProductTs0(R, w.Cs, T, C3);
+						d0 = calculateSingleProductCostFunc(R, w.Cs, T, C3);
+						break;
+					case MULTIPRODUCT:
+						double r = R / T;
+						double Cs = w.Cs;
+
+						double denominatror = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							double c_i = calculateResourceStoringCost(c3, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							denominatror += c_i * r_i;
+						}
+
+						ts0 = calculateMultiProductTs0(Cs, denominatror);
+						q0 = r * ts0;
+
+						double storageCost = 0;
+						for (Integer i : w.resourceIDsDemandsMap.keySet()) {
+							double c_i = calculateResourceStoringCost(c3, resourcesMap.get(i).volumePerUnit);
+							double r_i = w.resourceIDsDemandsMap.get(i) / T;
+							storageCost += (c_i * r_i * ts0 * T) / 2;
+						}
+
+						double supplyCost = Cs * T / ts0;
+
+						d0 = storageCost + supplyCost;
+						break;
+					}
 					break;
 				}
 
-				resourceResultsMap.put(r.id, new ResultItem(q0, ts0, d0));
+				resourceResultsMap.put(resource.id, new ResultItem(q0, ts0, d0));
 			}
 
 			calcResultsMap.put(w.id, resourceResultsMap);
@@ -155,11 +254,22 @@ public class Calculator {
 		return Math.sqrt(2 * R * Cs / (T * C1));
 	}
 
-	private static double caclulateSingleProductTs0(double R, double Cs, double T, double C1) {
+	private static double calculateSingleProductTs0(double R, double Cs, double T, double C1) {
 		return Math.sqrt(2 * T * Cs / (R * C1));
 	}
 
-	private static double caclulateSingleProductCostFunc(double R, double Cs, double T, double C1) {
+	private static double calculateSingleProductCostFunc(double R, double Cs, double T, double C1) {
 		return Math.sqrt(2 * R * T * Cs * C1);
+	}
+
+	private static double calculateMultiProductTs0(double Cs, double denominator) {
+		return Math.sqrt(2 * Cs / denominator);
+	}
+
+	private static double calculateResourceStoringCost(double whWagePerVolume, double volumePerUnit) {
+		double actualVolumePerUnit = Math.round(volumePerUnit);
+		if (actualVolumePerUnit < volumePerUnit)
+			actualVolumePerUnit += 1;
+		return whWagePerVolume * actualVolumePerUnit;
 	}
 }
