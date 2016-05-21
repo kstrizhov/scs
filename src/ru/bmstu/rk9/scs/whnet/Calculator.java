@@ -24,8 +24,8 @@ public class Calculator {
 		Map<Integer, Resource> resourcesMap = db.resourcesMap;
 
 		for (Consumer c : db.consumersMap.values()) {
-			int whID = c.warehouseID;
-			whNetMap.get(whID).consumersList.add(c);
+			Warehouse w = c.warehouse;
+			w.consumersList.add(c);
 		}
 
 		for (Integer i : db.thirdLevelWarehousesIDList) {

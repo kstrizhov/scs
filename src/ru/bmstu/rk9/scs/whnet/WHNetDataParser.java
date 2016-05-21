@@ -124,6 +124,7 @@ public class WHNetDataParser {
 
 	public static void parseConsumersData(String filePath) {
 
+		Map<Integer, Warehouse> whNetMap = DBHolder.getInstance().getWHNetDatabase().whNetMap;
 		Map<Integer, Consumer> consumersMap = new HashMap<Integer, Consumer>();
 
 		try {
@@ -157,7 +158,7 @@ public class WHNetDataParser {
 					int id = (int) row.getCell(idColumnIndex).getNumericCellValue();
 					String name = row.getCell(nameColumnIndex).getStringCellValue();
 					int warehouseID = (int) row.getCell(whIDColumnIndex).getNumericCellValue();
-					consumersMap.put(id, new Consumer(id, name, warehouseID));
+					consumersMap.put(id, new Consumer(id, name, whNetMap.get(warehouseID)));
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
 					break;
@@ -169,6 +170,11 @@ public class WHNetDataParser {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		for (Consumer c : consumersMap.values()) {
+			Warehouse w = c.warehouse;
+			w.consumersList.add(c);
 		}
 
 		DBHolder.getInstance().getWHNetDatabase().consumersMap = consumersMap;

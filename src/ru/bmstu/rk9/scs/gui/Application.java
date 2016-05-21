@@ -2,6 +2,7 @@ package ru.bmstu.rk9.scs.gui;
 
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.viewers.TreeViewer;
@@ -306,13 +307,12 @@ public class Application {
 		loadWHNetButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		loadWHNetButton.setText("Загрузить [..]");
 
-		TreeViewer treeViewer = new TreeViewer(warehouseNetTabComposite, SWT.BORDER);
+		TreeViewer treeViewer = new TreeViewer(warehouseNetTabComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		Tree tree = treeViewer.getTree();
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 9, 13));
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 9, 9));
 		tree.setLinesVisible(true);
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new DataLabelProvider());
-
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -486,6 +486,15 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label timePeriodLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		timePeriodLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -505,10 +514,37 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label chooseFirstLvlModelLaybel = new Label(warehouseNetTabComposite, SWT.NONE);
 		chooseFirstLvlModelLaybel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		chooseFirstLvlModelLaybel.setText("Используемая модель управления запасами");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -737,7 +773,6 @@ public class Application {
 				WHNetDataParser.parseResourcesData(s5);
 				
 				treeViewer.setInput(getInitalInput());
-				treeViewer.expandAll();
 			}
 		});
 		loadNetDataMenuItem.setText("LOAD NET DATA");
@@ -746,8 +781,11 @@ public class Application {
 
 	private Warehouse getInitalInput() {
 		WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
-		Warehouse root = db.getWHNetMap().get(1);
-
+		Warehouse root = new Warehouse(0, "root", 0, null, 0);
+		HashMap<Integer, Warehouse> rootChild = new HashMap<>();
+		rootChild.put(1, db.getWHNetMap().get(1));
+		db.getWHNetMap().get(1).setParent(root);
+		root.setChildren(rootChild);
 		return root;
 	}
 }

@@ -48,11 +48,31 @@ public class Warehouse {
 		return !this.children.isEmpty();
 	}
 
+	public boolean hasConsumers() {
+		return !this.consumersList.isEmpty();
+	}
+
 	public Map<Integer, Warehouse> getChildren() {
 		return this.children;
 	}
 
 	public String getName() {
 		return this.name;
+	}
+
+	public void setChildren(Map<Integer, Warehouse> children) {
+		this.children = children;
+	}
+
+	public void setParent(Warehouse parent) {
+		this.parent = parent;
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public List<Consumer> getConsumersList() {
+		return this.consumersList;
 	}
 }
