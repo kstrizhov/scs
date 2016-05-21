@@ -35,17 +35,16 @@ public class Calculator {
 
 		for (Integer i : db.secondLevelWarehousesIDList) {
 			Warehouse w = whNetMap.get(i);
-			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.childrensIDList, resourcesMap);
+			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
 		for (Integer i : db.firstLevelWarehousesIDList) {
 			Warehouse w = whNetMap.get(i);
-			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.childrensIDList, resourcesMap);
+			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
-		Map<Integer, Map<Integer, ResultItem>> calcResultsMap = new HashMap<>(); // maps results for
-																					// each wh to wh
-																					// id
+		// maps results for each wh to wh id
+		Map<Integer, Map<Integer, ResultItem>> calcResultsMap = new HashMap<>();
 
 		double c1 = db.c1;
 		double c2 = db.c2;
@@ -55,9 +54,8 @@ public class Calculator {
 
 		for (Warehouse w : whNetMap.values()) {
 
-			Map<Integer, ResultItem> resourceResultsMap = new HashMap<>(); // maps results for each
-																			// resource to resource
-																			// id
+			// maps results for each resource to resource id
+			Map<Integer, ResultItem> resourceResultsMap = new HashMap<>();
 
 			for (Resource resource : resourcesMap.values()) {
 
@@ -203,9 +201,9 @@ public class Calculator {
 				System.out.println("demand: " + w.resourceIDsDemandsMap.get(r.id));
 				System.out.println("optimal delivery volume: " + result.q0);
 				System.out.println("optimal delivery time period: " + result.ts0);
-				switch(w.level) {
+				switch (w.level) {
 				case FIRST:
-					switch(db.secondLvlSolveModelType) {
+					switch (db.secondLvlSolveModelType) {
 					case SINGLEPRODUCT:
 						total += result.d0;
 						break;
@@ -216,7 +214,7 @@ public class Calculator {
 					}
 					break;
 				case SECOND:
-					switch(db.secondLvlSolveModelType) {
+					switch (db.secondLvlSolveModelType) {
 					case SINGLEPRODUCT:
 						total += result.d0;
 						break;
@@ -226,7 +224,7 @@ public class Calculator {
 					}
 					break;
 				case THIRD:
-					switch(db.thirdLvlSolveModelType) {
+					switch (db.thirdLvlSolveModelType) {
 					case SINGLEPRODUCT:
 						total += result.d0;
 						break;
@@ -266,13 +264,13 @@ public class Calculator {
 	}
 
 	private static Map<Integer, Double> calculateDemandsForUpperWHLvls(Map<Integer, Warehouse> whNetMap,
-			List<Integer> childrensIDList, Map<Integer, Resource> resourcesMap) {
+			Map<Integer, Warehouse> children, Map<Integer, Resource> resourcesMap) {
 
 		Map<Integer, Double> demands = new HashMap<>();
 
 		for (Resource r : resourcesMap.values()) {
 			double demand = 0;
-			for (Integer i : childrensIDList) {
+			for (Integer i : children.keySet()) {
 				Warehouse w = whNetMap.get(i);
 				demand += w.resourceIDsDemandsMap.get(r.id);
 			}

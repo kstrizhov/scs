@@ -4,6 +4,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
@@ -37,6 +39,7 @@ import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
+import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class Application {
 
@@ -82,13 +85,13 @@ public class Application {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setText("Система управления запасами складского комплекса РЖД");
-		shell.setSize(800, 680);
+		shell.setSize(1024, 610);
 		shell.setLayout(new FormLayout());
 
 		TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
 		FormData fd_tabFolder = new FormData();
-		fd_tabFolder.bottom = new FormAttachment(0, 651);
-		fd_tabFolder.right = new FormAttachment(0, 794);
+		fd_tabFolder.bottom = new FormAttachment(0, 581);
+		fd_tabFolder.right = new FormAttachment(0, 1018);
 		fd_tabFolder.top = new FormAttachment(0);
 		fd_tabFolder.left = new FormAttachment(0);
 		tabFolder.setLayoutData(fd_tabFolder);
@@ -258,11 +261,28 @@ public class Application {
 
 		Composite warehouseNetTabComposite = new Composite(tabFolder, SWT.NONE);
 		warehouseNetTabItem.setControl(warehouseNetTabComposite);
-		GridLayout warehouseNetGridLayout = new GridLayout(3, false);
+		GridLayout warehouseNetGridLayout = new GridLayout(15, false);
 		warehouseNetGridLayout.marginLeft = 10;
 		warehouseNetGridLayout.marginRight = 10;
 		warehouseNetGridLayout.horizontalSpacing = 15;
 		warehouseNetTabComposite.setLayout(warehouseNetGridLayout);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Label treeLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		treeLabel.setText("Структура складской сети");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label lblLoadwhnetlabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		lblLoadwhnetlabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -273,18 +293,29 @@ public class Application {
 		loadWHNetButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-//				fileDialog.setText("Open");
-//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-//				String[] filterExtensions = { "*.xls" };
-//				fileDialog.setFilterExtensions(filterExtensions);
-//				String selected = fileDialog.open();
+				// FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				// fileDialog.setText("Open");
+				// fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				// String[] filterExtensions = { "*.xls" };
+				// fileDialog.setFilterExtensions(filterExtensions);
+				// String selected = fileDialog.open();
 				String selected = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
 				WHNetDataParser.parseWarehousesData(selected);
 			}
 		});
 		loadWHNetButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		loadWHNetButton.setText("Загрузить [..]");
+
+		TreeViewer treeViewer = new TreeViewer(warehouseNetTabComposite, SWT.BORDER);
+		Tree tree = treeViewer.getTree();
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 9, 13));
+		tree.setLinesVisible(true);
+		treeViewer.setContentProvider(new TreeContentProvider());
+		treeViewer.setLabelProvider(new DataLabelProvider());
+
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label loadWHNetConsumersInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		loadWHNetConsumersInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -295,17 +326,20 @@ public class Application {
 		loadWHNetConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-//				fileDialog.setText("Open");
-//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-//				String[] filterExtensions = { "*.xls" };
-//				fileDialog.setFilterExtensions(filterExtensions);
-//				String selected = fileDialog.open();
+				// FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				// fileDialog.setText("Open");
+				// fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				// String[] filterExtensions = { "*.xls" };
+				// fileDialog.setFilterExtensions(filterExtensions);
+				// String selected = fileDialog.open();
 				String selected = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
 				WHNetDataParser.parseConsumersData(selected);
 			}
 		});
 		loadWHNetConsumersInfoButton.setText("Загрузить [..]");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label loadTasksInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		loadTasksInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -316,17 +350,20 @@ public class Application {
 		loadTasksInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-//				fileDialog.setText("Open");
-//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-//				String[] filterExtensions = { "*.xls" };
-//				fileDialog.setFilterExtensions(filterExtensions);
-//				String selected = fileDialog.open();
+				// FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				// fileDialog.setText("Open");
+				// fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				// String[] filterExtensions = { "*.xls" };
+				// fileDialog.setFilterExtensions(filterExtensions);
+				// String selected = fileDialog.open();
 				String selected = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
 				WHNetDataParser.parseTasksFrequenciesData(selected);
 			}
 		});
 		loadTasksInfoButton.setText("Загрузить [..]");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label loadTasksNormsInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		loadTasksNormsInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -337,39 +374,48 @@ public class Application {
 		loadTasksNormsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-//				fileDialog.setText("Open");
-//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-//				String[] filterExtensions = { "*.xls" };
-//				fileDialog.setFilterExtensions(filterExtensions);
-//				String selected = fileDialog.open();
+				// FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				// fileDialog.setText("Open");
+				// fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				// String[] filterExtensions = { "*.xls" };
+				// fileDialog.setFilterExtensions(filterExtensions);
+				// String selected = fileDialog.open();
 				String selected = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
 				WHNetDataParser.parseTasksResourceNormsData(selected);
 			}
 		});
 		loadTasksNormsButton.setText("Загрузить [..]");
-		
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
 		Label loadResourcesInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		loadResourcesInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		loadResourcesInfoLabel.setText("Загрузить информацию о поставляемых материалах");
 		new Label(warehouseNetTabComposite, SWT.NONE);
-		
+
 		Button loadResourcesInfoButton = new Button(warehouseNetTabComposite, SWT.NONE);
 		loadResourcesInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-//				fileDialog.setText("Open");
-//				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-//				String[] filterExtensions = { "*.xls" };
-//				fileDialog.setFilterExtensions(filterExtensions);
-//				String selected = fileDialog.open();
+				// FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				// fileDialog.setText("Open");
+				// fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				// String[] filterExtensions = { "*.xls" };
+				// fileDialog.setFilterExtensions(filterExtensions);
+				// String selected = fileDialog.open();
 				String selected = "/home/kirill/diplom_info/data/wh_net/resources.xls";
 				WHNetDataParser.parseResourcesData(selected);
 			}
 		});
 		loadResourcesInfoButton.setText("Загрузить [..]");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -390,6 +436,9 @@ public class Application {
 			}
 		});
 		setC1Button.setText("Задать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label setC2Label = new Label(warehouseNetTabComposite, SWT.NONE);
 		setC2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -407,6 +456,9 @@ public class Application {
 			}
 		});
 		setC2Button.setText("Задать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label setC3Label = new Label(warehouseNetTabComposite, SWT.NONE);
 		setC3Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -424,20 +476,32 @@ public class Application {
 			}
 		});
 		setC3Button.setText("Задать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
-		
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
 		Label timePeriodLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		timePeriodLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		timePeriodLabel.setText("Период времени T, мес.");
-		
+
 		timePeriodText = new Text(warehouseNetTabComposite, SWT.BORDER);
 		timePeriodText.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		
+
 		Button btnNewButton = new Button(warehouseNetTabComposite, SWT.NONE);
 		btnNewButton.setText("Задать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -445,6 +509,9 @@ public class Application {
 		Label chooseFirstLvlModelLaybel = new Label(warehouseNetTabComposite, SWT.NONE);
 		chooseFirstLvlModelLaybel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		chooseFirstLvlModelLaybel.setText("Используемая модель управления запасами");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 
@@ -530,17 +597,29 @@ public class Application {
 		thirdLvlMultiprodModelButton.setBounds(0, 0, 112, 22);
 		thirdLvlMultiprodModelButton.setText("Многопродукт.");
 		new Label(warehouseNetTabComposite, SWT.NONE);
-		
-				Button caclulcateWHNetButton = new Button(warehouseNetTabComposite, SWT.NONE);
-				caclulcateWHNetButton.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
-						Calculator.calculateWHNet(db);
-						db.clear();
-					}
-				});
-				caclulcateWHNetButton.setText("Рассчитать");
+
+		Button caclulcateWHNetButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		caclulcateWHNetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
+				Calculator.calculateWHNet(db);
+				db.clear();
+			}
+		});
+		caclulcateWHNetButton.setText("Рассчитать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuBar);
@@ -624,28 +703,28 @@ public class Application {
 		loadNetDataMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				String s1 = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
-//				WHNetDataParser.parseWarehousesData(s1);
-//				String s2 = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
-//				WHNetDataParser.parseConsumersData(s2);
-//				String s3 = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
-//				WHNetDataParser.parseTasksFrequenciesData(s3);
-//				String s4 = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
-//				WHNetDataParser.parseTasksResourceNormsData(s4);
-//				String s5 = "/home/kirill/diplom_info/data/wh_net/resources.xls";
-//				WHNetDataParser.parseResourcesData(s5);
-//				
-//				String s1 = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
-//				WHNetDataParser.parseWarehousesData(s1);
-//				String s2 = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
-//				WHNetDataParser.parseConsumersData(s2);
-//				String s3 = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
-//				WHNetDataParser.parseTasksFrequenciesData(s3);
-//				String s4 = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
-//				WHNetDataParser.parseTasksResourceNormsData(s4);
-//				String s5 = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
-//				WHNetDataParser.parseResourcesData(s5);
-				
+				// String s1 = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
+				// WHNetDataParser.parseWarehousesData(s1);
+				// String s2 = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
+				// WHNetDataParser.parseConsumersData(s2);
+				// String s3 = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
+				// WHNetDataParser.parseTasksFrequenciesData(s3);
+				// String s4 = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
+				// WHNetDataParser.parseTasksResourceNormsData(s4);
+				// String s5 = "/home/kirill/diplom_info/data/wh_net/resources.xls";
+				// WHNetDataParser.parseResourcesData(s5);
+				//
+				// String s1 = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
+				// WHNetDataParser.parseWarehousesData(s1);
+				// String s2 = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
+				// WHNetDataParser.parseConsumersData(s2);
+				// String s3 = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
+				// WHNetDataParser.parseTasksFrequenciesData(s3);
+				// String s4 = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
+				// WHNetDataParser.parseTasksResourceNormsData(s4);
+				// String s5 = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
+				// WHNetDataParser.parseResourcesData(s5);
+
 				String s1 = "/home/kirill/diplom_info/data/data_whnet/whnet.xls";
 				WHNetDataParser.parseWarehousesData(s1);
 				String s2 = "/home/kirill/diplom_info/data/data_whnet/consumers.xls";
@@ -656,9 +735,19 @@ public class Application {
 				WHNetDataParser.parseTasksResourceNormsData(s4);
 				String s5 = "/home/kirill/diplom_info/data/data_whnet/resources.xls";
 				WHNetDataParser.parseResourcesData(s5);
+				
+				treeViewer.setInput(getInitalInput());
+				treeViewer.expandAll();
 			}
 		});
 		loadNetDataMenuItem.setText("LOAD NET DATA");
 
+	}
+
+	private Warehouse getInitalInput() {
+		WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
+		Warehouse root = db.getWHNetMap().get(1);
+
+		return root;
 	}
 }

@@ -48,6 +48,10 @@ public class WHNetDatabase {
 		this.resourcesSuppliersMap = new HashMap<>();
 	}
 
+	public Map<Integer, Warehouse> getWHNetMap() {
+		return this.whNetMap;
+	}
+
 	public Map<Integer, Consumer> getConsumersMap() {
 		return this.consumersMap;
 	}

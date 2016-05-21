@@ -21,7 +21,7 @@ public class WHNetDataParser {
 
 	private final static int initialIndex = -1;
 	private final static int neededSheetIndex = 0;
-	private final static int firstLevelWHID = 0;
+	private final static int noParentWHID = 0;
 
 	public static void parseWarehousesData(String filePath) {
 
@@ -66,7 +66,10 @@ public class WHNetDataParser {
 					double volume = row.getCell(volumeColumnIndex).getNumericCellValue();
 					int parentID = (int) row.getCell(parentIdColumnIndex).getNumericCellValue();
 					double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
-					whNetMap.put(id, new Warehouse(id, name, volume, parentID, Cs));
+					if (parentID == noParentWHID)
+						whNetMap.put(id, new Warehouse(id, name, volume, null, Cs));
+					else
+						whNetMap.put(id, new Warehouse(id, name, volume, whNetMap.get(parentID), Cs));
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
 					break;
@@ -101,18 +104,18 @@ public class WHNetDataParser {
 
 	private static void setChildren(Map<Integer, Warehouse> whNetMap) {
 		for (Warehouse w : whNetMap.values()) {
-			if (w.parentID == firstLevelWHID)
+			if (w.parent == null)
 				continue;
-			Warehouse parent = whNetMap.get(w.parentID);
-			parent.childrensIDList.add(w.id);
+			Warehouse parent = whNetMap.get(w.parent.id);
+			parent.children.put(w.id, w);
 		}
 	}
 
 	private static void setWHLevels(Map<Integer, Warehouse> whNetMap) {
 		for (Warehouse w : whNetMap.values()) {
-			if (w.parentID == firstLevelWHID)
+			if (w.parent == null)
 				w.level = WHLevel.FIRST;
-			else if ((w.parentID != firstLevelWHID) && !w.childrensIDList.isEmpty())
+			else if ((w.parent != null) && !w.children.isEmpty())
 				w.level = WHLevel.SECOND;
 			else
 				w.level = WHLevel.THIRD;
