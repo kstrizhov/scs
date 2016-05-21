@@ -203,9 +203,42 @@ public class Calculator {
 				System.out.println("demand: " + w.resourceIDsDemandsMap.get(r.id));
 				System.out.println("optimal delivery volume: " + result.q0);
 				System.out.println("optimal delivery time period: " + result.ts0);
+				switch(w.level) {
+				case FIRST:
+					switch(db.secondLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						total += result.d0;
+						break;
+					case MULTIPRODUCT:
+						int resourcesSuppliedInOnePack = db.suppliersMap.get(r.supplierID).suppliedResources.size();
+						total += result.d0 / resourcesSuppliedInOnePack;
+						break;
+					}
+					break;
+				case SECOND:
+					switch(db.secondLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						total += result.d0;
+						break;
+					case MULTIPRODUCT:
+						total += result.d0 / w.resourceIDsDemandsMap.values().size();
+						break;
+					}
+					break;
+				case THIRD:
+					switch(db.thirdLvlSolveModelType) {
+					case SINGLEPRODUCT:
+						total += result.d0;
+						break;
+					case MULTIPRODUCT:
+						total += result.d0 / w.resourceIDsDemandsMap.values().size();
+						break;
+					}
+					break;
+				}
 				System.out.println("optimal cost function value: " + result.d0);
+				System.out.println("current total value: " + total);
 				System.out.println("");
-				total += result.d0;
 			}
 		}
 
