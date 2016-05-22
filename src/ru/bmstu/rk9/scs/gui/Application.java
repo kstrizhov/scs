@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -300,19 +299,24 @@ public class Application {
 				// String[] filterExtensions = { "*.xls" };
 				// fileDialog.setFilterExtensions(filterExtensions);
 				// String selected = fileDialog.open();
-				String selected = "/home/kirill/diplom_info/data/wh_net/whnet.xls";
+				String selected = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
 				WHNetDataParser.parseWarehousesData(selected);
+				DBHolder.getInstance().getWHNetDatabase().setChanged();
+				DBHolder.getInstance().getWHNetDatabase().notifyObservers();
 			}
 		});
 		loadWHNetButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		loadWHNetButton.setText("Загрузить [..]");
 
-		TreeViewer treeViewer = new TreeViewer(warehouseNetTabComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		WHNetTreeViewer treeViewer = new WHNetTreeViewer(warehouseNetTabComposite,
+				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		Tree tree = treeViewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 9, 9));
 		tree.setLinesVisible(true);
-		treeViewer.setContentProvider(new TreeContentProvider());
-		treeViewer.setLabelProvider(new DataLabelProvider());
+		DBHolder.getInstance().getWHNetDatabase().addObserver(treeViewer);
+		treeViewer.setContentProvider(new WHNetTreeContentProvider());
+		treeViewer.setLabelProvider(new WHNetTreeLabelProvider());
+
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
@@ -332,8 +336,10 @@ public class Application {
 				// String[] filterExtensions = { "*.xls" };
 				// fileDialog.setFilterExtensions(filterExtensions);
 				// String selected = fileDialog.open();
-				String selected = "/home/kirill/diplom_info/data/wh_net/consumers.xls";
+				String selected = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
 				WHNetDataParser.parseConsumersData(selected);
+				DBHolder.getInstance().getWHNetDatabase().setChanged();
+				DBHolder.getInstance().getWHNetDatabase().notifyObservers();
 			}
 		});
 		loadWHNetConsumersInfoButton.setText("Загрузить [..]");
@@ -356,8 +362,10 @@ public class Application {
 				// String[] filterExtensions = { "*.xls" };
 				// fileDialog.setFilterExtensions(filterExtensions);
 				// String selected = fileDialog.open();
-				String selected = "/home/kirill/diplom_info/data/wh_net/task_freq.xls";
+				String selected = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
 				WHNetDataParser.parseTasksFrequenciesData(selected);
+				DBHolder.getInstance().getWHNetDatabase().setChanged();
+				DBHolder.getInstance().getWHNetDatabase().notifyObservers();
 			}
 		});
 		loadTasksInfoButton.setText("Загрузить [..]");
@@ -380,8 +388,10 @@ public class Application {
 				// String[] filterExtensions = { "*.xls" };
 				// fileDialog.setFilterExtensions(filterExtensions);
 				// String selected = fileDialog.open();
-				String selected = "/home/kirill/diplom_info/data/wh_net/res_norms.xls";
+				String selected = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
 				WHNetDataParser.parseTasksResourceNormsData(selected);
+				DBHolder.getInstance().getWHNetDatabase().setChanged();
+				DBHolder.getInstance().getWHNetDatabase().notifyObservers();
 			}
 		});
 		loadTasksNormsButton.setText("Загрузить [..]");
@@ -404,8 +414,10 @@ public class Application {
 				// String[] filterExtensions = { "*.xls" };
 				// fileDialog.setFilterExtensions(filterExtensions);
 				// String selected = fileDialog.open();
-				String selected = "/home/kirill/diplom_info/data/wh_net/resources.xls";
+				String selected = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
 				WHNetDataParser.parseResourcesData(selected);
+				DBHolder.getInstance().getWHNetDatabase().setChanged();
+				DBHolder.getInstance().getWHNetDatabase().notifyObservers();
 			}
 		});
 		loadResourcesInfoButton.setText("Загрузить [..]");
@@ -640,6 +652,7 @@ public class Application {
 			public void widgetSelected(SelectionEvent e) {
 				WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
 				Calculator.calculateWHNet(db);
+				treeViewer.refresh();
 				db.clear();
 			}
 		});
@@ -750,28 +763,28 @@ public class Application {
 				// String s5 = "/home/kirill/diplom_info/data/wh_net/resources.xls";
 				// WHNetDataParser.parseResourcesData(s5);
 				//
-				// String s1 = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
+				String s1 = "/home/kirill/diplom_info/data/wh_net1/whnet.xls";
+				WHNetDataParser.parseWarehousesData(s1);
+				String s2 = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
+				WHNetDataParser.parseConsumersData(s2);
+				String s3 = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
+				WHNetDataParser.parseTasksFrequenciesData(s3);
+				String s4 = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
+				WHNetDataParser.parseTasksResourceNormsData(s4);
+				String s5 = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
+				WHNetDataParser.parseResourcesData(s5);
+
+				// String s1 = "/home/kirill/diplom_info/data/data_whnet/whnet.xls";
 				// WHNetDataParser.parseWarehousesData(s1);
-				// String s2 = "/home/kirill/diplom_info/data/wh_net1/consumers.xls";
+				// String s2 = "/home/kirill/diplom_info/data/data_whnet/consumers.xls";
 				// WHNetDataParser.parseConsumersData(s2);
-				// String s3 = "/home/kirill/diplom_info/data/wh_net1/task_freq.xls";
+				// String s3 = "/home/kirill/diplom_info/data/data_whnet/task_freq.xls";
 				// WHNetDataParser.parseTasksFrequenciesData(s3);
-				// String s4 = "/home/kirill/diplom_info/data/wh_net1/res_norms.xls";
+				// String s4 = "/home/kirill/diplom_info/data/data_whnet/res_norms.xls";
 				// WHNetDataParser.parseTasksResourceNormsData(s4);
-				// String s5 = "/home/kirill/diplom_info/data/wh_net1/resources.xls";
+				// String s5 = "/home/kirill/diplom_info/data/data_whnet/resources.xls";
 				// WHNetDataParser.parseResourcesData(s5);
 
-				String s1 = "/home/kirill/diplom_info/data/data_whnet/whnet.xls";
-				WHNetDataParser.parseWarehousesData(s1);
-				String s2 = "/home/kirill/diplom_info/data/data_whnet/consumers.xls";
-				WHNetDataParser.parseConsumersData(s2);
-				String s3 = "/home/kirill/diplom_info/data/data_whnet/task_freq.xls";
-				WHNetDataParser.parseTasksFrequenciesData(s3);
-				String s4 = "/home/kirill/diplom_info/data/data_whnet/res_norms.xls";
-				WHNetDataParser.parseTasksResourceNormsData(s4);
-				String s5 = "/home/kirill/diplom_info/data/data_whnet/resources.xls";
-				WHNetDataParser.parseResourcesData(s5);
-				
 				treeViewer.setInput(getInitalInput());
 			}
 		});

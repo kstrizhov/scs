@@ -10,7 +10,7 @@ import ru.bmstu.rk9.scs.whnet.Resource;
 import ru.bmstu.rk9.scs.whnet.Task;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
-public class DataLabelProvider implements ILabelProvider {
+public class WHNetTreeLabelProvider implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {

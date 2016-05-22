@@ -12,7 +12,7 @@ import ru.bmstu.rk9.scs.whnet.Task;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 import ru.bmstu.rk9.scs.whnet.Warehouse.WHLevel;
 
-public class TreeContentProvider implements ITreeContentProvider {
+public class WHNetTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void dispose() {

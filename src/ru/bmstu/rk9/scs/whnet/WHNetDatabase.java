@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
-public class WHNetDatabase {
+public class WHNetDatabase extends Observable {
+
+	public void setChanged() {
+		super.setChanged();
+	}
 
 	protected Map<Integer, Warehouse> whNetMap;
 
@@ -16,7 +21,7 @@ public class WHNetDatabase {
 	protected Map<Integer, Consumer> consumersMap;
 
 	protected Map<Integer, Resource> resourcesMap;
-	
+
 	public Map<Integer, Supplier> suppliersMap;
 
 	protected double c1 = 100;
