@@ -8,6 +8,8 @@ public class Resource {
 	protected int supplierID;
 	protected double Cs;
 
+	protected Task task;
+
 	public Resource(int id, String name) {
 		this.id = id;
 		this.name = name;
@@ -19,5 +21,13 @@ public class Resource {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public Task getTask() {
+		return this.task;
+	}
+
+	public int getId() {
+		return this.id;
 	}
 }

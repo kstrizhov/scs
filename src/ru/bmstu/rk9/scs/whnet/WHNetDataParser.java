@@ -199,21 +199,16 @@ public class WHNetDataParser {
 				numOfTasks++;
 			}
 
-			Map<Integer, Task> tasksMap = DBHolder.getInstance().getWHNetDatabase().tasksMap;
-
-			for (int i = 1; i <= numOfTasks; i++) {
-				tasksMap.put(i, new Task(i, "task" + i));
-			}
-
 			Map<Integer, Consumer> consumersMap = DBHolder.getInstance().getWHNetDatabase().consumersMap;
 
 			for (int i = 1; i <= numOfConsumers; i++) {
 				Row row = sheet.getRow(i);
 				for (int j = 1; j <= numOfTasks; j++) {
 					double taskFrequency = row.getCell(j).getNumericCellValue();
-					Task task = tasksMap.get(j);
-					consumersMap.get(i).tasksList.put(task.id, task);
+					Task task = new Task(j, "task" + j);
+					consumersMap.get(i).tasksMap.put(task.id, task);
 					consumersMap.get(i).tasksFreqenciesMap.put(task.id, taskFrequency);
+					task.consumer = consumersMap.get(i);
 				}
 			}
 
@@ -228,7 +223,8 @@ public class WHNetDataParser {
 
 	public static void parseTasksResourceNormsData(String filePath) {
 
-		int numOfTasks = DBHolder.getInstance().getWHNetDatabase().tasksMap.size();
+		Map<Integer, Consumer> consumersMap = DBHolder.getInstance().getWHNetDatabase().consumersMap;
+		Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().resourcesMap;
 		int numOfResources = 0;
 
 		try {
@@ -245,20 +241,22 @@ public class WHNetDataParser {
 				numOfResources++;
 			}
 
-			Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().resourcesMap;
+			for (Consumer c : consumersMap.values()) {
 
-			for (int i = 1; i <= numOfResources; i++) {
-				resourcesMap.put(i, new Resource(i));
-			}
+				Map<Integer, Task> tasksMap = c.getTasksMap();
+				int numOfTasks = tasksMap.size();
 
-			Map<Integer, Task> tasksMap = DBHolder.getInstance().getWHNetDatabase().tasksMap;
-
-			for (int i = 1; i <= numOfTasks; i++) {
-				Row row = sheet.getRow(i);
-				for (int j = 1; j <= numOfResources; j++) {
-					double needsThisResource = row.getCell(j).getNumericCellValue();
-					Resource resource = resourcesMap.get(j);
-					tasksMap.get(i).resourceNorms.put(resource.id, needsThisResource);
+				for (int i = 1; i <= numOfTasks; i++) {
+					Row row = sheet.getRow(i);
+					for (int j = 1; j <= numOfResources; j++) {
+						double needsThisResource = row.getCell(j).getNumericCellValue();
+						Resource resource = new Resource(j);
+						tasksMap.get(i).resourceNorms.put(resource.id, needsThisResource);
+						tasksMap.get(i).resourcesMap.put(resource.id, resource);
+						resource.task = tasksMap.get(i);
+						if (!resourcesMap.containsKey(resource.id))
+							resourcesMap.put(resource.id, resource);
+					}
 				}
 			}
 
@@ -273,11 +271,7 @@ public class WHNetDataParser {
 
 	public static void parseResourcesData(String filePath) {
 
-		Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().getResourcesMap();
-
 		Map<Integer, Supplier> suppliersMap = new HashMap<>();
-
-		Map<Integer, Integer> resourcesSuppliersMap = new HashMap<>();
 
 		try {
 			FileInputStream fileInputStream = new FileInputStream(new File(filePath));
@@ -307,6 +301,45 @@ public class WHNetDataParser {
 					csIdColumnIndex = cell.getColumnIndex();
 			}
 
+			Map<Integer, Consumer> consumersMap = DBHolder.getInstance().getWHNetDatabase().getConsumersMap();
+
+			for (Consumer c : consumersMap.values()) {
+
+				Map<Integer, Task> tasksMap = c.getTasksMap();
+
+				for (Task t : tasksMap.values()) {
+
+					Map<Integer, Resource> resourcesMap = t.getResourcesMap();
+
+					Iterator<Row> rowIterator = sheet.iterator();
+					rowIterator.next();
+
+					while (rowIterator.hasNext()) {
+						Row row = rowIterator.next();
+						try {
+							int id = (int) row.getCell(idColumnIndex).getNumericCellValue();
+							String name = row.getCell(nameColumnIndex).getStringCellValue();
+							double volumePerUnit = row.getCell(volumePerUnitColumnIndex).getNumericCellValue();
+							int supplierID = (int) row.getCell(supplierIDColumnIndex).getNumericCellValue();
+							double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
+
+							resourcesMap.get(id).name = name;
+							resourcesMap.get(id).volumePerUnit = volumePerUnit;
+							resourcesMap.get(id).supplierID = supplierID;
+							resourcesMap.get(id).Cs = Cs;
+						} catch (Exception e) {
+							System.err.println("Error: " + e.getMessage());
+							e.printStackTrace();
+							break;
+						}
+					}
+				}
+			}
+
+			Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().getResourcesMap();
+
+			// Map<Integer, Integer> resourcesSuppliersMap = new HashMap<>();
+
 			Iterator<Row> rowIterator = sheet.iterator();
 			rowIterator.next();
 
@@ -331,7 +364,8 @@ public class WHNetDataParser {
 					} else
 						suppliersMap.get(supplierID).suppliedResources.add(resourcesMap.get(id));
 
-					resourcesSuppliersMap.put(id, supplierID);
+					// resourcesSuppliersMap.put(id, supplierID);
+
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
 					e.printStackTrace();
@@ -347,6 +381,6 @@ public class WHNetDataParser {
 		}
 
 		DBHolder.getInstance().getWHNetDatabase().suppliersMap = suppliersMap;
-		DBHolder.getInstance().getWHNetDatabase().resourcesSuppliersMap = resourcesSuppliersMap;
+		// DBHolder.getInstance().getWHNetDatabase().resourcesSuppliersMap = resourcesSuppliersMap;
 	}
 }

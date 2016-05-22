@@ -7,11 +7,15 @@ import java.util.Map;
 public class Calculator {
 
 	static class ResultItem {
+		
+		Resource resource;
+		
 		double q0;
 		double ts0;
 		double d0;
 
-		public ResultItem(double q0, double ts0, double d0) {
+		public ResultItem(Resource resource, double q0, double ts0, double d0) {
+			this.resource = resource;
 			this.q0 = q0;
 			this.ts0 = ts0;
 			this.d0 = d0;
@@ -22,11 +26,6 @@ public class Calculator {
 
 		Map<Integer, Warehouse> whNetMap = db.whNetMap;
 		Map<Integer, Resource> resourcesMap = db.resourcesMap;
-
-		for (Consumer c : db.consumersMap.values()) {
-			Warehouse w = c.warehouse;
-			w.consumersList.add(c);
-		}
 
 		for (Integer i : db.thirdLevelWarehousesIDList) {
 			Warehouse w = whNetMap.get(i);
@@ -180,7 +179,7 @@ public class Calculator {
 					break;
 				}
 
-				resourceResultsMap.put(resource.id, new ResultItem(q0, ts0, d0));
+				resourceResultsMap.put(resource.id, new ResultItem(resource, q0, ts0, d0));
 			}
 
 			calcResultsMap.put(w.id, resourceResultsMap);
@@ -253,7 +252,7 @@ public class Calculator {
 			double demand = 0;
 
 			for (Consumer c : consumersList)
-				for (Task t : c.tasksList.values()) {
+				for (Task t : c.tasksMap.values()) {
 					demand += c.tasksFreqenciesMap.get(t.id) * t.resourceNorms.get(r.id);
 				}
 

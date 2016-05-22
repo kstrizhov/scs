@@ -15,12 +15,9 @@ public class WHNetDatabase {
 
 	protected Map<Integer, Consumer> consumersMap;
 
-	protected Map<Integer, Task> tasksMap;
-
 	protected Map<Integer, Resource> resourcesMap;
-
-	protected Map<Integer, Supplier> suppliersMap;
-	protected Map<Integer, Integer> resourcesSuppliersMap;
+	
+	public Map<Integer, Supplier> suppliersMap;
 
 	protected double c1 = 100;
 	protected double c2 = 500;
@@ -42,10 +39,8 @@ public class WHNetDatabase {
 		this.secondLevelWarehousesIDList = new ArrayList<Integer>();
 		this.thirdLevelWarehousesIDList = new ArrayList<Integer>();
 		this.consumersMap = new HashMap<Integer, Consumer>();
-		this.tasksMap = new HashMap<Integer, Task>();
-		this.resourcesMap = new HashMap<Integer, Resource>();
+		this.resourcesMap = new HashMap<>();
 		this.suppliersMap = new HashMap<>();
-		this.resourcesSuppliersMap = new HashMap<>();
 	}
 
 	public Map<Integer, Warehouse> getWHNetMap() {
@@ -54,10 +49,6 @@ public class WHNetDatabase {
 
 	public Map<Integer, Consumer> getConsumersMap() {
 		return this.consumersMap;
-	}
-
-	public Map<Integer, Task> getTasksMap() {
-		return this.tasksMap;
 	}
 
 	public Map<Integer, Resource> getResourcesMap() {
@@ -98,9 +89,7 @@ public class WHNetDatabase {
 		this.secondLevelWarehousesIDList = new ArrayList<Integer>();
 		this.thirdLevelWarehousesIDList = new ArrayList<Integer>();
 		this.consumersMap = new HashMap<Integer, Consumer>();
-		this.tasksMap = new HashMap<Integer, Task>();
-		this.resourcesMap = new HashMap<Integer, Resource>();
+		this.resourcesMap = new HashMap<>();
 		this.suppliersMap = new HashMap<>();
-		this.resourcesSuppliersMap = new HashMap<>();
 	}
 }
