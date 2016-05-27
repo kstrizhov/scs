@@ -22,6 +22,7 @@ public class WHNetTreeViewer extends TreeViewer implements Observer{
 		System.err.println("updated");
 		this.setInput(getInitalInput());
 		this.refresh();
+		this.expandAll();
 	}
 	
 	private Warehouse getInitalInput() {

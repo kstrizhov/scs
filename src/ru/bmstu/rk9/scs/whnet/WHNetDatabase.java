@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+
 public class WHNetDatabase extends Observable {
 
 	public void setChanged() {
@@ -38,6 +40,8 @@ public class WHNetDatabase extends Observable {
 	protected SolveModelType secondLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 	protected SolveModelType thirdLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 
+	protected List<ResultItem> resultsList;
+
 	public WHNetDatabase() {
 		this.whNetMap = new HashMap<Integer, Warehouse>();
 		this.firstLevelWarehousesIDList = new ArrayList<Integer>();
@@ -46,6 +50,7 @@ public class WHNetDatabase extends Observable {
 		this.consumersMap = new HashMap<Integer, Consumer>();
 		this.resourcesMap = new HashMap<>();
 		this.suppliersMap = new HashMap<>();
+		this.resultsList = new ArrayList<>();
 	}
 
 	public Map<Integer, Warehouse> getWHNetMap() {
@@ -96,5 +101,10 @@ public class WHNetDatabase extends Observable {
 		this.consumersMap = new HashMap<Integer, Consumer>();
 		this.resourcesMap = new HashMap<>();
 		this.suppliersMap = new HashMap<>();
+		this.resultsList = new ArrayList<>();
+	}
+
+	public List<ResultItem> getResultsList() {
+		return this.resultsList;
 	}
 }

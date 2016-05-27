@@ -6,19 +6,48 @@ import java.util.Map;
 
 public class Calculator {
 
-	static class ResultItem {
-		
+	public static class ResultItem {
+
+		Warehouse warehouse;
 		Resource resource;
-		
+
+		double demand;
+
 		double q0;
 		double ts0;
 		double d0;
 
-		public ResultItem(Resource resource, double q0, double ts0, double d0) {
+		public ResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0) {
+			this.warehouse = warehouse;
 			this.resource = resource;
+			this.demand = demand;
 			this.q0 = q0;
 			this.ts0 = ts0;
 			this.d0 = d0;
+		}
+
+		public Warehouse getWarehouse() {
+			return this.warehouse;
+		}
+
+		public Resource getResource() {
+			return this.resource;
+		}
+
+		public double getQ0() {
+			return this.q0;
+		}
+
+		public double getTs0() {
+			return this.ts0;
+		}
+
+		public double getD0() {
+			return this.d0;
+		}
+
+		public double getDemand() {
+			return this.demand;
 		}
 	}
 
@@ -42,8 +71,7 @@ public class Calculator {
 			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
-		// maps results for each wh to wh id
-		Map<Integer, Map<Integer, ResultItem>> calcResultsMap = new HashMap<>();
+		List<ResultItem> resultsList = db.resultsList;
 
 		double c1 = db.c1;
 		double c2 = db.c2;
@@ -52,9 +80,6 @@ public class Calculator {
 		double T = db.T;
 
 		for (Warehouse w : whNetMap.values()) {
-
-			// maps results for each resource to resource id
-			Map<Integer, ResultItem> resourceResultsMap = new HashMap<>();
 
 			for (Resource resource : resourcesMap.values()) {
 
@@ -179,67 +204,9 @@ public class Calculator {
 					break;
 				}
 
-				resourceResultsMap.put(resource.id, new ResultItem(resource, q0, ts0, d0));
-			}
-
-			calcResultsMap.put(w.id, resourceResultsMap);
-		}
-
-		double total = 0;
-
-		for (Warehouse w : whNetMap.values()) {
-			System.out.println("####-- WAREHOUSE[" + w.id + "] --####");
-			System.out.println("level: " + w.level);
-			System.out.println("");
-
-			Map<Integer, ResultItem> resultsMap = calcResultsMap.get(w.id);
-			for (Resource r : resourcesMap.values()) {
-				ResultItem result = resultsMap.get(r.id);
-				System.out.println("~~ resource[" + r.id + "] ~~");
-				System.out.println("name: " + r.name);
-				System.out.println("demand: " + w.resourceIDsDemandsMap.get(r.id));
-				System.out.println("optimal delivery volume: " + result.q0);
-				System.out.println("optimal delivery time period: " + result.ts0);
-				switch (w.level) {
-				case FIRST:
-					switch (db.secondLvlSolveModelType) {
-					case SINGLEPRODUCT:
-						total += result.d0;
-						break;
-					case MULTIPRODUCT:
-						int resourcesSuppliedInOnePack = db.suppliersMap.get(r.supplierID).suppliedResources.size();
-						total += result.d0 / resourcesSuppliedInOnePack;
-						break;
-					}
-					break;
-				case SECOND:
-					switch (db.secondLvlSolveModelType) {
-					case SINGLEPRODUCT:
-						total += result.d0;
-						break;
-					case MULTIPRODUCT:
-						total += result.d0 / w.resourceIDsDemandsMap.values().size();
-						break;
-					}
-					break;
-				case THIRD:
-					switch (db.thirdLvlSolveModelType) {
-					case SINGLEPRODUCT:
-						total += result.d0;
-						break;
-					case MULTIPRODUCT:
-						total += result.d0 / w.resourceIDsDemandsMap.values().size();
-						break;
-					}
-					break;
-				}
-				System.out.println("optimal cost function value: " + result.d0);
-				System.out.println("current total value: " + total);
-				System.out.println("");
+				resultsList.add(new ResultItem(w, resource, R, q0, ts0, d0));
 			}
 		}
-
-		System.out.println("total cost function value: " + total);
 	}
 
 	private static Map<Integer, Double> calculateDemandsForThirdLvlWH(List<Consumer> consumersList,
