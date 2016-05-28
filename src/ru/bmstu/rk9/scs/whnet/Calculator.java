@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem.SupplyType;
+
 public class Calculator {
 
 	public static class ResultItem {
@@ -17,13 +19,24 @@ public class Calculator {
 		double ts0;
 		double d0;
 
-		public ResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0) {
+		enum SupplyType {
+			SINGLE, MULTI;
+		}
+
+		int numOfProductsInSupply;
+
+		SupplyType type;
+
+		public ResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0,
+				SupplyType type, int numOfProductsInSupply) {
 			this.warehouse = warehouse;
 			this.resource = resource;
 			this.demand = demand;
 			this.q0 = q0;
 			this.ts0 = ts0;
 			this.d0 = d0;
+			this.type = type;
+			this.numOfProductsInSupply = numOfProductsInSupply;
 		}
 
 		public Warehouse getWarehouse() {
@@ -89,6 +102,9 @@ public class Calculator {
 				double ts0 = -1;
 				double d0 = -1;
 
+				SupplyType type = null;
+				int numOfProductsInSupply = 0;
+
 				switch (w.level) {
 				case FIRST:
 					switch (db.firstLvlSolveModelType) {
@@ -98,6 +114,9 @@ public class Calculator {
 						q0 = calculateSingleProductQ0(R, resource.Cs, T, C1);
 						ts0 = calculateSingleProductTs0(R, resource.Cs, T, C1);
 						d0 = calculateSingleProductCostFunc(R, resource.Cs, T, C1);
+
+						type = SupplyType.SINGLE;
+						numOfProductsInSupply = 1;
 						break;
 					case MULTIPRODUCT:
 						double r = R / T;
@@ -110,6 +129,7 @@ public class Calculator {
 							double c_i = calculateResourceStoringCost(c1, resourcesMap.get(i).volumePerUnit);
 							double r_i = w.resourceIDsDemandsMap.get(i) / T;
 							denominatror += c_i * r_i;
+							numOfProductsInSupply += 1;
 						}
 
 						ts0 = calculateMultiProductTs0(Cs, denominatror);
@@ -127,6 +147,8 @@ public class Calculator {
 						double supplyCost = Cs * T / ts0;
 
 						d0 = storageCost + supplyCost;
+
+						type = SupplyType.MULTI;
 						break;
 					}
 					break;
@@ -138,6 +160,9 @@ public class Calculator {
 						q0 = calculateSingleProductQ0(R, w.Cs, T, C2);
 						ts0 = calculateSingleProductTs0(R, w.Cs, T, C2);
 						d0 = calculateSingleProductCostFunc(R, w.Cs, T, C2);
+
+						type = SupplyType.SINGLE;
+						numOfProductsInSupply = 1;
 						break;
 					case MULTIPRODUCT:
 						double r = R / T;
@@ -148,6 +173,7 @@ public class Calculator {
 							double c_i = calculateResourceStoringCost(c2, resourcesMap.get(i).volumePerUnit);
 							double r_i = w.resourceIDsDemandsMap.get(i) / T;
 							denominatror += c_i * r_i;
+							numOfProductsInSupply += 1;
 						}
 
 						ts0 = calculateMultiProductTs0(Cs, denominatror);
@@ -163,6 +189,8 @@ public class Calculator {
 						double supplyCost = Cs * T / ts0;
 
 						d0 = storageCost + supplyCost;
+
+						type = SupplyType.MULTI;
 						break;
 					}
 					break;
@@ -174,6 +202,9 @@ public class Calculator {
 						q0 = calculateSingleProductQ0(R, w.Cs, T, C3);
 						ts0 = calculateSingleProductTs0(R, w.Cs, T, C3);
 						d0 = calculateSingleProductCostFunc(R, w.Cs, T, C3);
+
+						type = SupplyType.SINGLE;
+						numOfProductsInSupply = 1;
 						break;
 					case MULTIPRODUCT:
 						double r = R / T;
@@ -184,6 +215,7 @@ public class Calculator {
 							double c_i = calculateResourceStoringCost(c3, resourcesMap.get(i).volumePerUnit);
 							double r_i = w.resourceIDsDemandsMap.get(i) / T;
 							denominatror += c_i * r_i;
+							numOfProductsInSupply += 1;
 						}
 
 						ts0 = calculateMultiProductTs0(Cs, denominatror);
@@ -199,12 +231,14 @@ public class Calculator {
 						double supplyCost = Cs * T / ts0;
 
 						d0 = storageCost + supplyCost;
+
+						type = SupplyType.MULTI;
 						break;
 					}
 					break;
 				}
 
-				resultsList.add(new ResultItem(w, resource, R, q0, ts0, d0));
+				resultsList.add(new ResultItem(w, resource, R, q0, ts0, d0, type, numOfProductsInSupply));
 			}
 		}
 	}
