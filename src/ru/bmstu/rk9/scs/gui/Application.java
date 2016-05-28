@@ -441,6 +441,7 @@ public class Application {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.setComparator(new WHNetTableViewerComparator());
 
 		Label setC2Label = new Label(warehouseNetTabComposite, SWT.NONE);
 		setC2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
