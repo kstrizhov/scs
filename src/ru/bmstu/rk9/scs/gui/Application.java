@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
@@ -40,6 +41,7 @@ import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.whnet.Calculator;
+import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
@@ -55,6 +57,7 @@ public class Application {
 	private Text timePeriodText;
 	private Table table;
 	private Text filterText;
+	private Text totalText;
 
 	/**
 	 * Launch the application.
@@ -602,6 +605,10 @@ public class Application {
 				treeViewer.refresh();
 				tableViewer.setInput(DBHolder.getInstance().getWHNetDatabase().getResultsList());
 				tableViewer.refresh();
+
+				double total = calculateTotal(tableViewer);
+				totalText.setText(Double.toString(total));
+
 				db.clear();
 			}
 		});
@@ -611,11 +618,23 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label filterLabel = new Label(warehouseNetTabComposite, SWT.NONE);
-		filterLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		filterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		filterLabel.setText("Фильтр:");
 
 		filterText = new Text(warehouseNetTabComposite, SWT.BORDER);
 		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Label totalLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		totalLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		totalLabel.setText("Затраты:");
+
+		totalText = new Text(warehouseNetTabComposite, SWT.BORDER);
+		totalText.setEditable(false);
+		totalText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -623,6 +642,8 @@ public class Application {
 				filter.setSearchText(filterText.getText());
 				tableViewer.setSearchText(filterText.getText());
 				tableViewer.refresh();
+				double total = calculateTotal(tableViewer);
+				totalText.setText(Double.toString(total));
 			}
 		});
 
@@ -757,5 +778,27 @@ public class Application {
 		db.getWHNetMap().get(1).setParent(root);
 		root.setChildren(rootChild);
 		return root;
+	}
+
+	private double calculateTotal(WHNetTableViewer viewer) {
+
+		double total = 0;
+
+		Table table = viewer.getTable();
+		TableItem[] tableItems = table.getItems();
+
+		for (TableItem i : tableItems) {
+			ResultItem r = (ResultItem) i.getData();
+			switch (r.getType()) {
+			case SINGLE:
+				total += r.getD0();
+				break;
+			case MULTI:
+				total += r.getD0() / r.getNumOfProductsInSupply();
+				break;
+			}
+		}
+
+		return total;
 	}
 }

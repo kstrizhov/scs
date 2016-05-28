@@ -10,22 +10,22 @@ public class Calculator {
 
 	public static class ResultItem {
 
-		Warehouse warehouse;
-		Resource resource;
+		private Warehouse warehouse;
+		private Resource resource;
 
-		double demand;
+		private double demand;
 
-		double q0;
-		double ts0;
-		double d0;
+		private double q0;
+		private double ts0;
+		private double d0;
 
-		enum SupplyType {
+		public enum SupplyType {
 			SINGLE, MULTI;
 		}
 
-		int numOfProductsInSupply;
+		private int numOfProductsInSupply;
 
-		SupplyType type;
+		private SupplyType type;
 
 		public ResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0,
 				SupplyType type, int numOfProductsInSupply) {
@@ -61,6 +61,14 @@ public class Calculator {
 
 		public double getDemand() {
 			return this.demand;
+		}
+
+		public SupplyType getType() {
+			return this.type;
+		}
+
+		public int getNumOfProductsInSupply() {
+			return this.numOfProductsInSupply;
 		}
 	}
 
