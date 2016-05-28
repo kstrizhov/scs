@@ -42,6 +42,8 @@ import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 
 public class Application {
 
@@ -52,6 +54,7 @@ public class Application {
 	private Text setC1Text;
 	private Text timePeriodText;
 	private Table table;
+	private Text filterText;
 
 	/**
 	 * Launch the application.
@@ -88,12 +91,12 @@ public class Application {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setText("Система управления запасами складского комплекса РЖД");
-		shell.setSize(1100, 590);
+		shell.setSize(1100, 640);
 		shell.setLayout(new FormLayout());
 
 		TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
 		FormData fd_tabFolder = new FormData();
-		fd_tabFolder.bottom = new FormAttachment(0, 580);
+		fd_tabFolder.bottom = new FormAttachment(0, 630);
 		fd_tabFolder.right = new FormAttachment(0, 1090);
 		fd_tabFolder.top = new FormAttachment(0);
 		fd_tabFolder.left = new FormAttachment(0);
@@ -442,6 +445,7 @@ public class Application {
 		table.setLinesVisible(true);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		tableViewer.setComparator(new WHNetTableViewerComparator());
+		tableViewer.addFilter(new WHNetTableViewerFilter());
 
 		Label setC2Label = new Label(warehouseNetTabComposite, SWT.NONE);
 		setC2Label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -600,6 +604,20 @@ public class Application {
 			}
 		});
 		caclulcateWHNetButton.setText("Рассчитать");
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		filterText = new Text(warehouseNetTabComposite, SWT.BORDER);
+		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		filterText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				WHNetTableViewerFilter filter = (WHNetTableViewerFilter) tableViewer.getFilters()[0];
+				filter.setSearchText(filterText.getText());
+				tableViewer.refresh();
+			}
+		});
 
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuBar);
