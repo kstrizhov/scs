@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -42,8 +44,6 @@ import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 
 public class Application {
 
@@ -267,16 +267,17 @@ public class Application {
 
 		Composite warehouseNetTabComposite = new Composite(tabFolder, SWT.NONE);
 		warehouseNetTabItem.setControl(warehouseNetTabComposite);
-		GridLayout warehouseNetGridLayout = new GridLayout(4, false);
+		GridLayout warehouseNetGridLayout = new GridLayout(5, false);
 		warehouseNetGridLayout.marginLeft = 10;
 		warehouseNetGridLayout.marginRight = 10;
-		warehouseNetGridLayout.horizontalSpacing = 15;
+		warehouseNetGridLayout.horizontalSpacing = 8;
 		warehouseNetTabComposite.setLayout(warehouseNetGridLayout);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label treeLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		treeLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		treeLabel.setText("Структура складской сети");
 
 		Label lblLoadwhnetlabel = new Label(warehouseNetTabComposite, SWT.NONE);
@@ -306,7 +307,7 @@ public class Application {
 		WHNetTreeViewer treeViewer = new WHNetTreeViewer(warehouseNetTabComposite,
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		Tree tree = treeViewer.getTree();
-		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 5);
+		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, false, false, 2, 5);
 		gd_tree.widthHint = 346;
 		tree.setLayoutData(gd_tree);
 		tree.setLinesVisible(true);
@@ -415,6 +416,7 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Label resultsLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		resultsLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		resultsLabel.setText("Результаты расчетов");
 
 		Label setC1Label = new Label(warehouseNetTabComposite, SWT.NONE);
@@ -437,7 +439,7 @@ public class Application {
 
 		WHNetTableViewer tableViewer = new WHNetTableViewer(warehouseNetTabComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
-		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 8);
+		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, false, false, 2, 8);
 		gd_table.widthHint = 361;
 		table.setLayoutData(gd_table);
 		tableViewer.createColumns();
@@ -607,6 +609,10 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Label filterLabel = new Label(warehouseNetTabComposite, SWT.NONE);
+		filterLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		filterLabel.setText("Фильтр:");
 
 		filterText = new Text(warehouseNetTabComposite, SWT.BORDER);
 		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
