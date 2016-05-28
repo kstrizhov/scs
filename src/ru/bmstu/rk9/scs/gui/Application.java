@@ -621,6 +621,7 @@ public class Application {
 			public void keyReleased(KeyEvent e) {
 				WHNetTableViewerFilter filter = (WHNetTableViewerFilter) tableViewer.getFilters()[0];
 				filter.setSearchText(filterText.getText());
+				tableViewer.setSearchText(filterText.getText());
 				tableViewer.refresh();
 			}
 		});
