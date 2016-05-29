@@ -27,8 +27,8 @@ public class WHNetTreeContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof Consumer) {
 			Consumer c = (Consumer) parentElement;
 			List<Task> list = new ArrayList<>();
-			for (Integer i : c.getTasksFreqList().keySet())
-				if (c.getTasksFreqList().get(i) != 0)
+			for (Integer i : c.getTasksFreqMap().keySet())
+				if (c.getTasksFreqMap().get(i) != 0)
 					list.add(c.getTasksMap().get(i));
 			return list.toArray();
 		}
@@ -54,8 +54,8 @@ public class WHNetTreeContentProvider implements ITreeContentProvider {
 		if (inputElement instanceof Consumer) {
 			Consumer root = (Consumer) inputElement;
 			List<Task> list = new ArrayList<>();
-			for (Integer i : root.getTasksFreqList().keySet())
-				if (root.getTasksFreqList().get(i) != 0)
+			for (Integer i : root.getTasksFreqMap().keySet())
+				if (root.getTasksFreqMap().get(i) != 0)
 					list.add(root.getTasksMap().get(i));
 			return list.toArray();
 		}

@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 
 import ru.bmstu.rk9.scs.lib.DBHolder;
-import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
+import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class WHNetTreeViewer extends TreeViewer implements Observer{

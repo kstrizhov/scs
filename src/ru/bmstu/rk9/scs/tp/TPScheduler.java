@@ -1,14 +1,13 @@
-package ru.bmstu.rk9.scs.lib;
+package ru.bmstu.rk9.scs.tp;
 
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
 import Jama.Matrix;
-import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
+import ru.bmstu.rk9.scs.lib.DBHolder;
+import ru.bmstu.rk9.scs.lib.TPDatabase;
 import ru.bmstu.rk9.scs.tp.Point.Type;
-import ru.bmstu.rk9.scs.tp.Producer;
-import ru.bmstu.rk9.scs.tp.Solver;
 
 public class TPScheduler {
 

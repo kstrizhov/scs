@@ -36,6 +36,10 @@ public class Warehouse {
 		return this.level;
 	}
 
+	public void setLevel(WHLevel level) {
+		this.level = level;
+	}
+
 	public void print() {
 		System.out.println("WAREHOUSE id: " + id + " name: " + name + " parentID: " + parent.id);
 	}

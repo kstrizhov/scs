@@ -23,8 +23,28 @@ public class Resource {
 		return this.name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setVolumePerUnit(double volumePerUnit) {
+		this.volumePerUnit = volumePerUnit;
+	}
+
+	public void setSupplierID(int supplierID) {
+		this.supplierID = supplierID;
+	}
+
+	public void setCs(double Cs) {
+		this.Cs = Cs;
+	}
+
 	public Task getTask() {
 		return this.task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 	public int getId() {

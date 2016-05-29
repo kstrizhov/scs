@@ -23,7 +23,7 @@ public class Consumer {
 		return this.tasksMap;
 	}
 
-	public Map<Integer, Double> getTasksFreqList() {
+	public Map<Integer, Double> getTasksFreqMap() {
 		return this.tasksFreqenciesMap;
 	}
 

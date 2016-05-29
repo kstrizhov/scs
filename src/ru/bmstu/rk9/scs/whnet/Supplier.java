@@ -18,4 +18,8 @@ public class Supplier {
 	public String getName() {
 		return this.name;
 	}
+
+	public List<Resource> getSuppliedResources() {
+		return this.suppliedResources;
+	}
 }

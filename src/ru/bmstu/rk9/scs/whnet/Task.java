@@ -34,6 +34,10 @@ public class Task {
 		return this.consumer;
 	}
 
+	public void setConsumer(Consumer consumer) {
+		this.consumer = consumer;
+	}
+
 	public int getId() {
 		return this.id;
 	}

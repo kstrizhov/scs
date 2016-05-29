@@ -1,7 +1,5 @@
 package ru.bmstu.rk9.scs.lib;
 
-import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
-
 public class DBHolder {
 	private static DBHolder INSTANCE;
 

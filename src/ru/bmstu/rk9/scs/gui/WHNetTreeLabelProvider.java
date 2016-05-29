@@ -64,7 +64,7 @@ public class WHNetTreeLabelProvider implements ILabelProvider {
 		}
 		if (element instanceof Task) {
 			Task t = (Task) element;
-			return "Task (id: " + t.getId() + ", freq: " + t.getConsumer().getTasksFreqList().get(t.getId()) + ")";
+			return "Task (id: " + t.getId() + ", freq: " + t.getConsumer().getTasksFreqMap().get(t.getId()) + ")";
 		}
 		if (element instanceof Resource) {
 			Resource r = (Resource) element;

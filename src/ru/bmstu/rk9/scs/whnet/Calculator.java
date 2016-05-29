@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem.SupplyType;
 
 public class Calculator {
@@ -74,31 +75,31 @@ public class Calculator {
 
 	public static void calculateWHNet(WHNetDatabase db) {
 
-		Map<Integer, Warehouse> whNetMap = db.whNetMap;
-		Map<Integer, Resource> resourcesMap = db.resourcesMap;
+		Map<Integer, Warehouse> whNetMap = db.getWHNetMap();
+		Map<Integer, Resource> resourcesMap = db.getResourcesMap();
 
-		for (Integer i : db.thirdLevelWarehousesIDList) {
+		for (Integer i : db.getThirdLevelWarehousesIDList()) {
 			Warehouse w = whNetMap.get(i);
 			w.resourceIDsDemandsMap = calculateDemandsForThirdLvlWH(w.consumersList, resourcesMap);
 		}
 
-		for (Integer i : db.secondLevelWarehousesIDList) {
+		for (Integer i : db.getSecondLevelWarehousesIDList()) {
 			Warehouse w = whNetMap.get(i);
 			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
-		for (Integer i : db.firstLevelWarehousesIDList) {
+		for (Integer i : db.getFirstLevelWarehousesIDList()) {
 			Warehouse w = whNetMap.get(i);
 			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
-		List<ResultItem> resultsList = db.resultsList;
+		List<ResultItem> resultsList = db.getResultsList();
 
-		double c1 = db.c1;
-		double c2 = db.c2;
-		double c3 = db.c3;
+		double c1 = db.getC1();
+		double c2 = db.getC2();
+		double c3 = db.getC3();
 
-		double T = db.T;
+		double T = db.getTimePeriod();
 
 		for (Warehouse w : whNetMap.values()) {
 
@@ -115,7 +116,7 @@ public class Calculator {
 
 				switch (w.level) {
 				case FIRST:
-					switch (db.firstLvlSolveModelType) {
+					switch (db.getFirstLvlSolveModelType()) {
 					case SINGLEPRODUCT:
 						double C1 = calculateResourceStoringCost(c1, resource.volumePerUnit);
 
@@ -161,7 +162,7 @@ public class Calculator {
 					}
 					break;
 				case SECOND:
-					switch (db.secondLvlSolveModelType) {
+					switch (db.getSecondLvlSolveModelType()) {
 					case SINGLEPRODUCT:
 						double C2 = calculateResourceStoringCost(c2, resource.volumePerUnit);
 
@@ -203,7 +204,7 @@ public class Calculator {
 					}
 					break;
 				case THIRD:
-					switch (db.thirdLvlSolveModelType) {
+					switch (db.getThirdLvlSolveModelType()) {
 					case SINGLEPRODUCT:
 						double C3 = calculateResourceStoringCost(c3, resource.volumePerUnit);
 

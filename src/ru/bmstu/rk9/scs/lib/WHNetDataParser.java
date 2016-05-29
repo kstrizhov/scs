@@ -1,4 +1,4 @@
-package ru.bmstu.rk9.scs.whnet;
+package ru.bmstu.rk9.scs.lib;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import ru.bmstu.rk9.scs.lib.DBHolder;
+import ru.bmstu.rk9.scs.whnet.Consumer;
+import ru.bmstu.rk9.scs.whnet.Resource;
+import ru.bmstu.rk9.scs.whnet.Supplier;
+import ru.bmstu.rk9.scs.whnet.Task;
+import ru.bmstu.rk9.scs.whnet.Warehouse;
 import ru.bmstu.rk9.scs.whnet.Warehouse.WHLevel;
 
 public class WHNetDataParser {
@@ -88,15 +92,15 @@ public class WHNetDataParser {
 		setWHLevels(whNetMap);
 
 		for (Warehouse w : whNetMap.values())
-			switch (w.level) {
+			switch (w.getLevel()) {
 			case FIRST:
-				DBHolder.getInstance().getWHNetDatabase().firstLevelWarehousesIDList.add(w.id);
+				DBHolder.getInstance().getWHNetDatabase().firstLevelWarehousesIDList.add(w.getId());
 				break;
 			case SECOND:
-				DBHolder.getInstance().getWHNetDatabase().secondLevelWarehousesIDList.add(w.id);
+				DBHolder.getInstance().getWHNetDatabase().secondLevelWarehousesIDList.add(w.getId());
 				break;
 			case THIRD:
-				DBHolder.getInstance().getWHNetDatabase().thirdLevelWarehousesIDList.add(w.id);
+				DBHolder.getInstance().getWHNetDatabase().thirdLevelWarehousesIDList.add(w.getId());
 				break;
 			}
 		DBHolder.getInstance().getWHNetDatabase().whNetMap = whNetMap;
@@ -104,21 +108,21 @@ public class WHNetDataParser {
 
 	private static void setChildren(Map<Integer, Warehouse> whNetMap) {
 		for (Warehouse w : whNetMap.values()) {
-			if (w.parent == null)
+			if (w.getParent() == null)
 				continue;
-			Warehouse parent = whNetMap.get(w.parent.id);
-			parent.children.put(w.id, w);
+			Warehouse parent = whNetMap.get(w.getParent().getId());
+			parent.getChildren().put(w.getId(), w);
 		}
 	}
 
 	private static void setWHLevels(Map<Integer, Warehouse> whNetMap) {
 		for (Warehouse w : whNetMap.values()) {
-			if (w.parent == null)
-				w.level = WHLevel.FIRST;
-			else if ((w.parent != null) && !w.children.isEmpty())
-				w.level = WHLevel.SECOND;
+			if (w.getParent() == null)
+				w.setLevel(WHLevel.FIRST);
+			else if ((w.getParent() != null) && !w.getChildren().isEmpty())
+				w.setLevel(WHLevel.SECOND);
 			else
-				w.level = WHLevel.THIRD;
+				w.setLevel(WHLevel.THIRD);
 		}
 	}
 
@@ -173,8 +177,8 @@ public class WHNetDataParser {
 		}
 
 		for (Consumer c : consumersMap.values()) {
-			Warehouse w = c.warehouse;
-			w.consumersList.add(c);
+			Warehouse w = c.getSupplyingWarehouse();
+			w.getConsumersList().add(c);
 		}
 
 		DBHolder.getInstance().getWHNetDatabase().consumersMap = consumersMap;
@@ -206,9 +210,9 @@ public class WHNetDataParser {
 				for (int j = 1; j <= numOfTasks; j++) {
 					double taskFrequency = row.getCell(j).getNumericCellValue();
 					Task task = new Task(j, "task" + j);
-					consumersMap.get(i).tasksMap.put(task.id, task);
-					consumersMap.get(i).tasksFreqenciesMap.put(task.id, taskFrequency);
-					task.consumer = consumersMap.get(i);
+					consumersMap.get(i).getTasksMap().put(task.getId(), task);
+					consumersMap.get(i).getTasksFreqMap().put(task.getId(), taskFrequency);
+					task.setConsumer(consumersMap.get(i));
 				}
 			}
 
@@ -251,11 +255,11 @@ public class WHNetDataParser {
 					for (int j = 1; j <= numOfResources; j++) {
 						double needsThisResource = row.getCell(j).getNumericCellValue();
 						Resource resource = new Resource(j);
-						tasksMap.get(i).resourceNorms.put(resource.id, needsThisResource);
-						tasksMap.get(i).resourcesMap.put(resource.id, resource);
-						resource.task = tasksMap.get(i);
-						if (!resourcesMap.containsKey(resource.id))
-							resourcesMap.put(resource.id, resource);
+						tasksMap.get(i).getResourceNorms().put(resource.getId(), needsThisResource);
+						tasksMap.get(i).getResourcesMap().put(resource.getId(), resource);
+						resource.setTask(tasksMap.get(i));
+						if (!resourcesMap.containsKey(resource.getId()))
+							resourcesMap.put(resource.getId(), resource);
 					}
 				}
 			}
@@ -323,10 +327,10 @@ public class WHNetDataParser {
 							int supplierID = (int) row.getCell(supplierIDColumnIndex).getNumericCellValue();
 							double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
 
-							resourcesMap.get(id).name = name;
-							resourcesMap.get(id).volumePerUnit = volumePerUnit;
-							resourcesMap.get(id).supplierID = supplierID;
-							resourcesMap.get(id).Cs = Cs;
+							resourcesMap.get(id).setName(name);
+							resourcesMap.get(id).setVolumePerUnit(volumePerUnit);
+							resourcesMap.get(id).setSupplierID(supplierID);
+							resourcesMap.get(id).setCs(Cs);
 						} catch (Exception e) {
 							System.err.println("Error: " + e.getMessage());
 							e.printStackTrace();
@@ -337,8 +341,6 @@ public class WHNetDataParser {
 			}
 
 			Map<Integer, Resource> resourcesMap = DBHolder.getInstance().getWHNetDatabase().getResourcesMap();
-
-			// Map<Integer, Integer> resourcesSuppliersMap = new HashMap<>();
 
 			Iterator<Row> rowIterator = sheet.iterator();
 			rowIterator.next();
@@ -352,19 +354,17 @@ public class WHNetDataParser {
 					int supplierID = (int) row.getCell(supplierIDColumnIndex).getNumericCellValue();
 					double Cs = row.getCell(csIdColumnIndex).getNumericCellValue();
 
-					resourcesMap.get(id).name = name;
-					resourcesMap.get(id).volumePerUnit = volumePerUnit;
-					resourcesMap.get(id).supplierID = supplierID;
-					resourcesMap.get(id).Cs = Cs;
+					resourcesMap.get(id).setName(name);
+					resourcesMap.get(id).setVolumePerUnit(volumePerUnit);
+					resourcesMap.get(id).setSupplierID(supplierID);
+					resourcesMap.get(id).setCs(Cs);
 
 					if (!suppliersMap.containsKey(supplierID)) {
 						Supplier supplier = new Supplier(supplierID, "supplier" + supplierID);
-						supplier.suppliedResources.add(resourcesMap.get(id));
+						supplier.getSuppliedResources().add(resourcesMap.get(id));
 						suppliersMap.put(supplierID, supplier);
 					} else
-						suppliersMap.get(supplierID).suppliedResources.add(resourcesMap.get(id));
-
-					// resourcesSuppliersMap.put(id, supplierID);
+						suppliersMap.get(supplierID).getSuppliedResources().add(resourcesMap.get(id));
 
 				} catch (Exception e) {
 					System.err.println("Error: " + e.getMessage());
@@ -381,6 +381,5 @@ public class WHNetDataParser {
 		}
 
 		DBHolder.getInstance().getWHNetDatabase().suppliersMap = suppliersMap;
-		// DBHolder.getInstance().getWHNetDatabase().resourcesSuppliersMap = resourcesSuppliersMap;
 	}
 }

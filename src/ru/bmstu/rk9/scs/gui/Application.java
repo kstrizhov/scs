@@ -35,16 +35,16 @@ import org.eclipse.swt.widgets.Tree;
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.lib.TPDataParser;
-import ru.bmstu.rk9.scs.lib.TPScheduler;
+import ru.bmstu.rk9.scs.lib.WHNetDataParser;
+import ru.bmstu.rk9.scs.lib.WHNetDatabase;
+import ru.bmstu.rk9.scs.lib.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
+import ru.bmstu.rk9.scs.tp.TPScheduler;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
-import ru.bmstu.rk9.scs.whnet.WHNetDataParser;
-import ru.bmstu.rk9.scs.whnet.WHNetDatabase;
-import ru.bmstu.rk9.scs.whnet.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class Application {
