@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -36,13 +37,14 @@ import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.lib.TPDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataParser;
+import ru.bmstu.rk9.scs.lib.WHNetDataWriter;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
-import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.tp.Scheduler;
+import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
@@ -94,12 +96,12 @@ public class Application {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setText("Система управления запасами складского комплекса РЖД");
-		shell.setSize(1100, 640);
+		shell.setSize(1100, 660);
 		shell.setLayout(new FormLayout());
 
 		TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
 		FormData fd_tabFolder = new FormData();
-		fd_tabFolder.bottom = new FormAttachment(0, 630);
+		fd_tabFolder.bottom = new FormAttachment(0, 640);
 		fd_tabFolder.right = new FormAttachment(0, 1090);
 		fd_tabFolder.top = new FormAttachment(0);
 		fd_tabFolder.left = new FormAttachment(0);
@@ -513,7 +515,7 @@ public class Application {
 		new Label(warehouseNetTabComposite, SWT.NONE);
 
 		Composite radioBtnnGroupsComposite = new Composite(warehouseNetTabComposite, SWT.NONE);
-		radioBtnnGroupsComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		radioBtnnGroupsComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 2));
 		radioBtnnGroupsComposite.setLayout(new GridLayout(3, false));
 
 		Group grpI = new Group(radioBtnnGroupsComposite, SWT.NONE);
@@ -614,8 +616,23 @@ public class Application {
 		});
 		caclulcateWHNetButton.setText("Рассчитать");
 		new Label(warehouseNetTabComposite, SWT.NONE);
-		new Label(warehouseNetTabComposite, SWT.NONE);
-		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button reportButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		reportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setText("Save");
+				fileDialog.setFilterPath("/");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				HSSFWorkbook wb = WHNetDataWriter.createWorkbookFromTable(tableViewer);
+				WHNetDataWriter.dumpWorkbookToAFile(wb, selected, shell);
+			}
+		});
+		reportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		reportButton.setText("Отчет");
 
 		Label filterLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		filterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
