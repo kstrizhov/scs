@@ -9,7 +9,7 @@ import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.lib.TPDatabase;
 import ru.bmstu.rk9.scs.tp.Point.Type;
 
-public class TPScheduler {
+public class Scheduler {
 
 	private class ScheduleItem {
 		Month month;
@@ -31,7 +31,7 @@ public class TPScheduler {
 	private ArrayList<ScheduleItem> consumersSuppliesList;
 	private ArrayList<ScheduleItem> basesSuppliesList;
 
-	public TPScheduler(TPDatabase db) {
+	public Scheduler(TPDatabase db) {
 
 		this.producersList = new ArrayList<Producer>();
 		this.consumersList = new ArrayList<ConsumptionPoint>();

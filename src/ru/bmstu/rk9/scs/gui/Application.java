@@ -42,7 +42,7 @@ import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Solver;
-import ru.bmstu.rk9.scs.tp.TPScheduler;
+import ru.bmstu.rk9.scs.tp.Scheduler;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
@@ -719,7 +719,7 @@ public class Application {
 		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TPScheduler scheduler = new TPScheduler(DBHolder.getInstance().getTPDatabase());
+				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
 				scheduler.schedule();
 			}
 		});
