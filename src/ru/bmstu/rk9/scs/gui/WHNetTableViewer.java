@@ -23,9 +23,11 @@ import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 public class WHNetTableViewer extends TableViewer {
 
 	private String searchText;
+	private String upperCaseSearchText;
 
 	public void setSearchText(String searchText) {
 		this.searchText = searchText;
+		upperCaseSearchText = searchText.toUpperCase();
 	}
 
 	public WHNetTableViewer(Composite parent, int style) {
@@ -33,8 +35,9 @@ public class WHNetTableViewer extends TableViewer {
 	}
 
 	public void createColumns() {
-		String[] titles = { "wh_id", "wh_name", "res_id", "res_name", "demand", "q0", "ts0", "d0" };
-		int[] bounds = { 60, 100, 60, 100, 100, 100, 100, 100 };
+		String[] titles = { "wh_id", "wh_name", "res_id", "res_name", "demand", "q0", "ts0", "d0", "supply_type",
+				"prods_in_supply" };
+		int[] bounds = { 60, 100, 60, 100, 100, 100, 100, 100, 100, 120 };
 
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -143,6 +146,43 @@ public class WHNetTableViewer extends TableViewer {
 			public String getText(Object element) {
 				ResultItem item = (ResultItem) element;
 				return Double.toString(item.getD0());
+			}
+		});
+
+		col = createTableViewerColumn(titles[8], bounds[8], 8);
+		col.setLabelProvider(new StyledCellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				ResultItem item = (ResultItem) cell.getElement();
+				String cellText = item.getType().toString();
+				cell.setText(cellText);
+				if (upperCaseSearchText != null && upperCaseSearchText.length() > 0) {
+					int intRangesCorrectSize[] = StringSymbolSetSearchTool.getSearchTermOccurrences(upperCaseSearchText,
+							cellText);
+					List<StyleRange> styleRange = new ArrayList<StyleRange>();
+					for (int i = 0; i < intRangesCorrectSize.length / 2; i++) {
+						int start = intRangesCorrectSize[i];
+						int length = intRangesCorrectSize[++i];
+						Color color = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
+						StyleRange myStyledRange = new StyleRange(start, length, null, color);
+
+						styleRange.add(myStyledRange);
+					}
+					cell.setStyleRanges(styleRange.toArray(new StyleRange[styleRange.size()]));
+				} else {
+					cell.setStyleRanges(null);
+				}
+
+				super.update(cell);
+			}
+		});
+
+		col = createTableViewerColumn(titles[9], bounds[9], 9);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				ResultItem item = (ResultItem) element;
+				return Integer.toString(item.getNumOfProductsInSupply());
 			}
 		});
 	}

@@ -22,10 +22,8 @@ public class WHNetTableViewerComparator extends ViewerComparator {
 
 	public void setColumn(int column) {
 		if (column == this.propertyIndex) {
-			// Same column as last sort; toggle the direction
 			direction = 1 - direction;
 		} else {
-			// New column; do an ascending sort
 			this.propertyIndex = column;
 			direction = DESCENDING;
 		}
@@ -54,24 +52,36 @@ public class WHNetTableViewerComparator extends ViewerComparator {
 			comparationResult = resultItem1.getResource().getName().compareTo(resultItem2.getResource().getName());
 			break;
 		case 4:
+			Double demand1 = resultItem1.getDemand();
+			Double demand2 = resultItem2.getDemand();
+			comparationResult = demand1.compareTo(demand2);
+			break;
+		case 5:
 			Double q01 = resultItem1.getQ0();
 			Double q02 = resultItem2.getQ0();
 			comparationResult = q01.compareTo(q02);
 			break;
-		case 5:
+		case 6:
 			Double ts01 = resultItem1.getTs0();
 			Double ts02 = resultItem2.getTs0();
 			comparationResult = ts01.compareTo(ts02);
 			break;
-		case 6:
+		case 7:
 			Double d01 = resultItem1.getD0();
 			Double d02 = resultItem2.getD0();
 			comparationResult = d01.compareTo(d02);
 			break;
+		case 8:
+			comparationResult = resultItem1.getType().toString().compareTo(resultItem2.getType().toString());
+			break;
+		case 9:
+			Integer numOfProdsInSupply1 = resultItem1.getNumOfProductsInSupply();
+			Integer numOfProdsInSupply2 = resultItem2.getNumOfProductsInSupply();
+			comparationResult = numOfProdsInSupply1.compareTo(numOfProdsInSupply2);
+			break;
 		default:
 			comparationResult = 0;
 		}
-		// If descending order, flip the direction
 		if (direction == DESCENDING) {
 			comparationResult = -comparationResult;
 		}

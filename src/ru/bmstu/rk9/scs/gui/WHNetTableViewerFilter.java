@@ -8,9 +8,11 @@ import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 public class WHNetTableViewerFilter extends ViewerFilter {
 
 	private String searchString;
+	private String upperCaseSearchString;
 
 	public void setSearchText(String s) {
 		this.searchString = ".*" + s + ".*";
+		upperCaseSearchString = ".*" + s.toUpperCase() + ".*";
 	}
 
 	@Override
@@ -23,6 +25,9 @@ public class WHNetTableViewerFilter extends ViewerFilter {
 			return true;
 		}
 		if (r.getResource().getName().matches(searchString)) {
+			return true;
+		}
+		if (r.getType().toString().matches(upperCaseSearchString)) {
 			return true;
 		}
 		return false;
