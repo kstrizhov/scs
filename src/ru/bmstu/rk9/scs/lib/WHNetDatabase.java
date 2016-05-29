@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import Jama.Matrix;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Consumer;
 import ru.bmstu.rk9.scs.whnet.Resource;
@@ -45,6 +46,10 @@ public class WHNetDatabase extends Observable {
 	protected SolveModelType thirdLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 
 	protected List<ResultItem> resultsList;
+
+	protected Matrix normalDistributionValues;
+	protected double[] normalDistributionHeaderValues;
+	protected double[] normalDistributionFirstColumnValues;
 
 	public WHNetDatabase() {
 		this.whNetMap = new HashMap<Integer, Warehouse>();
@@ -138,6 +143,18 @@ public class WHNetDatabase extends Observable {
 
 	public void setThirdLvlSolveModelType(SolveModelType thirdLvlSolveModelType) {
 		this.thirdLvlSolveModelType = thirdLvlSolveModelType;
+	}
+
+	public Matrix getNormalDistributionValues() {
+		return this.normalDistributionValues;
+	}
+
+	public double[] getNormalDistributionHeaderValues() {
+		return this.normalDistributionHeaderValues;
+	}
+
+	public double[] getNormalDistributionFirstColumnValues() {
+		return this.normalDistributionFirstColumnValues;
 	}
 
 	public void clear() {

@@ -9,11 +9,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Jama.Matrix;
 import ru.bmstu.rk9.scs.whnet.Consumer;
 import ru.bmstu.rk9.scs.whnet.Resource;
 import ru.bmstu.rk9.scs.whnet.Supplier;
@@ -381,5 +383,60 @@ public class WHNetDataParser {
 		}
 
 		DBHolder.getInstance().getWHNetDatabase().suppliersMap = suppliersMap;
+	}
+
+	public static void readNormalDistributionValues(String filePath) {
+
+		int numOfRows = 0;
+		int numOfColumns = 0;
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+			Workbook workBook = new HSSFWorkbook(fileInputStream);
+			Sheet sheet = workBook.getSheetAt(neededSheetIndex);
+
+			numOfRows = sheet.getLastRowNum();
+
+			Row headRow = sheet.getRow(0);
+			Iterator<Cell> headRowIterator = headRow.cellIterator();
+			while (headRowIterator.hasNext()) {
+				numOfColumns += 1;
+				headRowIterator.next();
+			}
+
+			Matrix values = new Matrix(numOfRows, numOfColumns);
+			double[] headerValues = new double[numOfColumns];
+			double[] firstColumnValues = new double[numOfRows];
+
+			for (int j = 1; j <= numOfColumns; j++) {
+				Row row = sheet.getRow(0);
+				double value = row.getCell(j).getNumericCellValue();
+				headerValues[j - 1] = value;
+			}
+
+			for (int i = 1; i <= numOfRows; i++) {
+				Row row = sheet.getRow(i);
+				double value = row.getCell(0).getNumericCellValue();
+				firstColumnValues[i - 1] = value;
+			}
+
+			for (int i = 1; i <= numOfRows; i++)
+				for (int j = 1; j <= numOfColumns; j++) {
+					Row row = sheet.getRow(i);
+					double value = row.getCell(j).getNumericCellValue();
+					values.set(i - 1, j - 1, value);
+				}
+
+			workBook.close();
+			fileInputStream.close();
+
+			DBHolder.getInstance().getWHNetDatabase().normalDistributionValues = values;
+			DBHolder.getInstance().getWHNetDatabase().normalDistributionHeaderValues = headerValues;
+			DBHolder.getInstance().getWHNetDatabase().normalDistributionFirstColumnValues = firstColumnValues;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

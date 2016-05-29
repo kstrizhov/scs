@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Tree;
 
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
+import ru.bmstu.rk9.scs.lib.RandomValueCalculator;
 import ru.bmstu.rk9.scs.lib.TPDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataWriter;
@@ -678,6 +679,7 @@ public class Application {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DBHolder.getInstance();
+				WHNetDataParser.readNormalDistributionValues("./data/normal_distribution_values.xls");
 				tabFolder.setEnabled(true);
 			}
 		});
