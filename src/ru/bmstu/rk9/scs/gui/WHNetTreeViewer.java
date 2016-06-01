@@ -11,7 +11,7 @@ import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
-public class WHNetTreeViewer extends TreeViewer implements Observer{
+public class WHNetTreeViewer extends TreeViewer implements Observer {
 
 	public WHNetTreeViewer(Composite parent, int style) {
 		super(parent, style);
@@ -24,7 +24,7 @@ public class WHNetTreeViewer extends TreeViewer implements Observer{
 		this.refresh();
 		this.expandAll();
 	}
-	
+
 	private Warehouse getInitalInput() {
 		WHNetDatabase db = DBHolder.getInstance().getWHNetDatabase();
 		Warehouse root = new Warehouse(0, "root", 0, null, 0);

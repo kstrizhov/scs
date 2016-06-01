@@ -2,9 +2,8 @@ package ru.bmstu.rk9.scs.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -25,11 +24,11 @@ import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
-public class PlotBuilder {
+public class ChartBuilder {
 
-	public static class PlotFrame extends ChartComposite {
+	public static class ChartFrame extends ChartComposite {
 
-		public PlotFrame(final Composite comp, final int style) {
+		public ChartFrame(final Composite comp, final int style) {
 			super(comp, style, null, ChartComposite.DEFAULT_WIDTH, ChartComposite.DEFAULT_HEIGHT, 0, 0,
 					Integer.MAX_VALUE, Integer.MAX_VALUE, ChartComposite.DEFAULT_BUFFER_USED, true, true, true, true,
 					true);
@@ -37,10 +36,9 @@ public class PlotBuilder {
 		}
 	}
 
-	public static XYSeries createData(ResultItem item) {
-		String whName = item.getWarehouse().getName();
+	private static XYSeries createResouceStockData(ResultItem item) {
 		String resName = item.getResource().getName();
-		XYSeries series = new XYSeries(whName + ": " + resName);
+		XYSeries series = new XYSeries(resName);
 
 		double T = DBHolder.getInstance().getWHNetDatabase().getTimePeriod();
 
@@ -59,29 +57,37 @@ public class PlotBuilder {
 		return series;
 	}
 
-	public static XYSeriesCollection createDataset(List<ResultItem> items) {
+	public static XYSeriesCollection createWhResourcesStockData(Warehouse warehouse) {
+		int whID = warehouse.getId();
 		XYSeriesCollection dataset = new XYSeriesCollection();
 
-		for (ResultItem i : items) {
-			XYSeries data = createData(i);
+		List<ResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
+
+		List<ResultItem> neededItems = new ArrayList<>();
+
+		for (ResultItem i : resultItems)
+			if (i.getWarehouse().getId() == whID)
+				neededItems.add(i);
+
+		for (ResultItem i : neededItems) {
+			XYSeries data = createResouceStockData(i);
 			dataset.addSeries(data);
 		}
 
 		return dataset;
 	}
 
-	public static XYSeriesCollection createStockData(Warehouse warehouse) {
-		String whName = warehouse.getName();
+	public static XYSeriesCollection createWhTotalStockData(Warehouse warehouse) {
 		int whID = warehouse.getId();
-		XYSeries series = new XYSeries(whName);
+		XYSeries totalStockSeries = new XYSeries("Текущий уровень запасов склада");
 
-		Map<Integer, ResultItem> itemMap = new HashMap<>();
+		List<ResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
 
-		List<ResultItem> items = DBHolder.getInstance().getWHNetDatabase().getResultsList();
+		List<ResultItem> neededItems = new ArrayList<>();
 
-		for (ResultItem i : items)
+		for (ResultItem i : resultItems)
 			if (i.getWarehouse().getId() == whID)
-				itemMap.put(i.getResource().getId(), i);
+				neededItems.add(i);
 
 		double T = DBHolder.getInstance().getWHNetDatabase().getTimePeriod();
 
@@ -91,23 +97,28 @@ public class PlotBuilder {
 			double t = step * i;
 			double q = 0;
 
-			for (ResultItem item : itemMap.values()) {
+			for (ResultItem item : neededItems) {
 				double r = item.getDemand() / T;
 				double ts0 = item.getTs0();
 				int n = (int) Math.floor(t / ts0);
 				double q0 = item.getQ0();
 				q += q0 - r * (t - n * ts0);
 			}
-			series.add(t, q);
+			totalStockSeries.add(t, q);
 		}
 
+		XYSeries maxStockLvlSeries = new XYSeries("Максимальный уровень запасов");
+		maxStockLvlSeries.add(0.0, warehouse.getVolume());
+		maxStockLvlSeries.add(T, warehouse.getVolume());
+
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
+		dataset.addSeries(totalStockSeries);
+		dataset.addSeries(maxStockLvlSeries);
 
 		return dataset;
 	}
 
-	public static void drawChart(XYSeriesCollection dataset) {
+	public static void openChartFrame(XYSeriesCollection dataset, String chartTitle) {
 
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
@@ -115,7 +126,7 @@ public class PlotBuilder {
 		shell.setSize(800, 400);
 		shell.setLayout(new FillLayout());
 
-		createPlot(shell, dataset);
+		createChartFrame(shell, dataset, chartTitle);
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
@@ -125,11 +136,13 @@ public class PlotBuilder {
 		}
 	}
 
-	public static PlotFrame createPlot(Composite composite, XYSeriesCollection dataset) {
+	@SuppressWarnings("deprecation")
+	private static ChartFrame createChartFrame(Composite composite, XYSeriesCollection dataset, String chartTitle) {
 
-		PlotFrame frame = new PlotFrame(composite, SWT.NONE);
+		ChartFrame frame = new ChartFrame(composite, SWT.NONE);
 
-		final JFreeChart chart = ChartFactory.createXYLineChart("qqq", "sss", "ddd", dataset);
+		final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, "Единиц продукции, шт.", "Время, мес.",
+				dataset);
 		chart.setBackgroundPaint(Color.white);
 
 		XYPlot plot = chart.getXYPlot();

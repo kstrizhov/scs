@@ -1,7 +1,5 @@
 package ru.bmstu.rk9.scs.gui;
 
-import java.time.Month;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +8,8 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -32,16 +32,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
-import ru.bmstu.rk9.scs.lib.RandomValueCalculator;
 import ru.bmstu.rk9.scs.lib.TPDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataWriter;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase.SolveModelType;
-import ru.bmstu.rk9.scs.tp.Base;
 import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
 import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Scheduler;
@@ -320,6 +319,63 @@ public class Application {
 		DBHolder.getInstance().getWHNetDatabase().addObserver(treeViewer);
 		treeViewer.setContentProvider(new WHNetTreeContentProvider());
 		treeViewer.setLabelProvider(new WHNetTreeLabelProvider());
+
+		final Menu treePopupMenu = new Menu(tree);
+
+		final MenuItem whResourcesStockChartMenuItem = new MenuItem(treePopupMenu, SWT.CASCADE);
+		whResourcesStockChartMenuItem.setText("Построить графики запасов ресурсов");
+
+		final MenuItem whTotalStockChartMenuItem = new MenuItem(treePopupMenu, SWT.CASCADE);
+		whTotalStockChartMenuItem.setText("Построить график общего уровня запас склада");
+
+		tree.setMenu(treePopupMenu);
+
+		treePopupMenu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuShown(MenuEvent e) {
+				boolean enabled = false;
+
+				if (tree.getSelection()[0].getData() instanceof Warehouse) {
+					enabled = true;
+				}
+
+				whResourcesStockChartMenuItem.setEnabled(enabled);
+				whTotalStockChartMenuItem.setEnabled(enabled);
+			}
+
+			@Override
+			public void menuHidden(MenuEvent e) {
+			}
+		});
+
+		whResourcesStockChartMenuItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!(tree.getSelection()[0].getData() instanceof Warehouse))
+					return;
+
+				final Warehouse wh = (Warehouse) tree.getSelection()[0].getData();
+
+				XYSeriesCollection dataset = ChartBuilder.createWhResourcesStockData(wh);
+				ChartBuilder.openChartFrame(dataset, "Уровни запасов ресурсов, поставляемых складом №" + wh.getId());
+			}
+		});
+
+		whTotalStockChartMenuItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!(tree.getSelection()[0].getData() instanceof Warehouse))
+					return;
+
+				final Warehouse wh = (Warehouse) tree.getSelection()[0].getData();
+
+				XYSeriesCollection dataset = ChartBuilder.createWhTotalStockData(wh);
+				ChartBuilder.openChartFrame(dataset, "Общий уровень запасов склада №" + wh.getId());
+			}
+		});
 
 		Label loadWHNetConsumersInfoLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		loadWHNetConsumersInfoLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -612,7 +668,7 @@ public class Application {
 				double total = calculateTotal(tableViewer);
 				totalText.setText(Double.toString(total));
 
-				db.clear();
+				//db.clear();
 			}
 		});
 		caclulcateWHNetButton.setText("Рассчитать");
@@ -701,29 +757,10 @@ public class Application {
 		testMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<Producer> list = DBHolder.getInstance().getTPDatabase().getProducersList();
-				ArrayList<ConsumptionPoint> list2 = DBHolder.getInstance().getTPDatabase().getConsumersList();
-				ArrayList<Base> list3 = DBHolder.getInstance().getTPDatabase().getBasesList();
-				for (Producer p : list) {
-					System.out.println("id:" + p.getId());
-					System.out.println("name: " + p.getName());
-					System.out.println("prod: " + p.getProduction());
-					System.out.println("cost: " + p.getCostPerUnit());
-				}
-				for (ConsumptionPoint p : list2) {
-					System.out.println("id:" + p.getId());
-					System.out.println("name: " + p.getName());
-					System.out.println("cons: " + p.getConsumption());
-					for (Month m : p.getMonthsList())
-						System.out.println("months: " + m);
-				}
-				for (Base b : list3) {
-					System.out.println("id:" + b.getId());
-					System.out.println("name: " + b.getName());
-					System.out.println("volume: " + b.getVolume());
-				}
-				Matrix m = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
-				m.print(m.getColumnDimension(), 2);
+
+				Warehouse w = DBHolder.getInstance().getWHNetDatabase().getWHNetMap().get(1);
+
+				ChartBuilder.openChartFrame(ChartBuilder.createWhResourcesStockData(w), "test");
 			}
 		});
 		testMenuItem.setText("Test button");

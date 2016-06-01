@@ -79,4 +79,8 @@ public class Warehouse {
 	public List<Consumer> getConsumersList() {
 		return this.consumersList;
 	}
+
+	public double getVolume() {
+		return this.volume;
+	}
 }
