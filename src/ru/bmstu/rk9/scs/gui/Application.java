@@ -108,165 +108,6 @@ public class Application {
 		tabFolder.setLayoutData(fd_tabFolder);
 		tabFolder.setEnabled(false);
 
-		TabItem roadMetalTabItem = new TabItem(tabFolder, SWT.NONE);
-		roadMetalTabItem.setText("Управление поставками щебня");
-
-		Composite roadMetalTabComposite = new Composite(tabFolder, SWT.NONE);
-		roadMetalTabItem.setControl(roadMetalTabComposite);
-		GridLayout roadMetalGridLayout = new GridLayout(2, false);
-		roadMetalGridLayout.marginLeft = 10;
-		roadMetalGridLayout.marginRight = 10;
-		roadMetalTabComposite.setLayout(roadMetalGridLayout);
-
-		Label loadProducersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadProducersInfoLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-		loadProducersInfoLabel.setText("Загрузить информацию о карьерах:");
-
-		Button loadProducersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadProducersInfoButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
-				DBHolder.getInstance().getTPDatabase().setProducersList(TPDataParser.parseProducersExcelFile(selected));
-			}
-		});
-		loadProducersInfoButton.setText("Загрузить [..]");
-
-		Label loadConsumersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadConsumersInfoLabel.setText("Загрузить информацию о точках потребления:");
-
-		Button loadConsumersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
-				DBHolder.getInstance().getTPDatabase().setConsumersList(TPDataParser.parseConsumersExcelFile(selected));
-			}
-		});
-		loadConsumersInfoButton.setText("Загрузить [..]");
-
-		Label loadBasesInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadBasesInfoLabel.setText("Загрузить информацию о перевалочных базах щебня:");
-
-		Button loadBasesInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadBasesInfoButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
-				DBHolder.getInstance().getTPDatabase().setBasesList(TPDataParser.parseBasesExcelFile(selected));
-			}
-		});
-		loadBasesInfoButton.setText("Загрузить [..]");
-
-		Label loadProdsConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadProdsConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"карьеры - точки потребления\":");
-
-		Button loadProdsConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadProdsConsDistanceMatrixButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-				fileDialog.setText("Open");
-				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
-				String[] filterExtensions = { "*.xls" };
-				fileDialog.setFilterExtensions(filterExtensions);
-				String selected = fileDialog.open();
-				DBHolder.getInstance().getTPDatabase()
-						.setProdsConsDistanceMatrix(TPDataParser.parseProdConsDistanceMatrixExcelFile(selected));
-			}
-		});
-		loadProdsConsDistanceMatrixButton.setText("Загрузить [..]");
-
-		Label loadProdsBasesDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadProdsBasesDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"карьеры - базы\":");
-
-		Button loadProdsBasesDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadProdsBasesDistanceMatrixButton.setText("Загрузить [..]");
-
-		Label loadBasesConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		loadBasesConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"базы - точки потребления\":");
-
-		Button loadBasesConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
-		loadBasesConsDistanceMatrixButton.setText("Загрузить [..]");
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-
-		Label enterEpsilonLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		enterEpsilonLabel.setEnabled(false);
-		enterEpsilonLabel.setText("Введите значение:");
-		new Label(roadMetalTabComposite, SWT.NONE);
-
-		enterEpsilonText = new Text(roadMetalTabComposite, SWT.BORDER);
-		enterEpsilonText.setEnabled(false);
-		enterEpsilonText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		Button enterEpsilonButton = new Button(roadMetalTabComposite, SWT.NONE);
-		enterEpsilonButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				double eps = Double.parseDouble(enterEpsilonText.getText());
-				DBHolder.getInstance().getTPDatabase().setEps(eps);
-			}
-		});
-		enterEpsilonButton.setEnabled(false);
-		enterEpsilonButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		enterEpsilonButton.setText("Задать");
-
-		Button useEpsilonCheckButton = new Button(roadMetalTabComposite, SWT.CHECK);
-		useEpsilonCheckButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Button btn = (Button) e.getSource();
-				if (btn.getSelection()) {
-					enterEpsilonLabel.setEnabled(true);
-					enterEpsilonText.setEnabled(true);
-					enterEpsilonButton.setEnabled(true);
-					DBHolder.getInstance().getTPDatabase().setEpsUsed(true);
-				} else {
-					enterEpsilonLabel.setEnabled(false);
-					enterEpsilonText.setEnabled(false);
-					enterEpsilonButton.setEnabled(false);
-					DBHolder.getInstance().getTPDatabase().setEpsUsed(false);
-				}
-			}
-		});
-		useEpsilonCheckButton.setText("Использовать дополнительные возмущения для исключения вырожденности задачи");
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-
-		Button solveButton = new Button(roadMetalTabComposite, SWT.NONE);
-		solveButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				List<Producer> producersList = DBHolder.getInstance().getTPDatabase().getProducersList();
-				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getTPDatabase().getConsumersList();
-
-				Matrix C0 = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
-
-				Matrix solution = Solver.solve(producersList, consumersList, C0);
-			}
-		});
-		solveButton.setText("РЕШИТЬ");
-		new Label(roadMetalTabComposite, SWT.NONE);
-
 		TabItem warehouseNetTabItem = new TabItem(tabFolder, SWT.NONE);
 		warehouseNetTabItem.setText("Управление складской сетью");
 
@@ -676,7 +517,7 @@ public class Application {
 				double total = calculateTotal(tableViewer);
 				totalText.setText(Double.toString(total));
 
-				//db.clear();
+				// db.clear();
 			}
 		});
 		caclulcateWHNetButton.setText("Рассчитать");
@@ -716,6 +557,165 @@ public class Application {
 		totalText = new Text(warehouseNetTabComposite, SWT.BORDER);
 		totalText.setEditable(false);
 		totalText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+
+		TabItem roadMetalTabItem = new TabItem(tabFolder, SWT.NONE);
+		roadMetalTabItem.setText("Управление поставками щебня");
+
+		Composite roadMetalTabComposite = new Composite(tabFolder, SWT.NONE);
+		roadMetalTabItem.setControl(roadMetalTabComposite);
+		GridLayout roadMetalGridLayout = new GridLayout(2, false);
+		roadMetalGridLayout.marginLeft = 10;
+		roadMetalGridLayout.marginRight = 10;
+		roadMetalTabComposite.setLayout(roadMetalGridLayout);
+
+		Label loadProducersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadProducersInfoLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		loadProducersInfoLabel.setText("Загрузить информацию о карьерах:");
+
+		Button loadProducersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadProducersInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				DBHolder.getInstance().getTPDatabase().setProducersList(TPDataParser.parseProducersExcelFile(selected));
+			}
+		});
+		loadProducersInfoButton.setText("Загрузить [..]");
+
+		Label loadConsumersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadConsumersInfoLabel.setText("Загрузить информацию о точках потребления:");
+
+		Button loadConsumersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				DBHolder.getInstance().getTPDatabase().setConsumersList(TPDataParser.parseConsumersExcelFile(selected));
+			}
+		});
+		loadConsumersInfoButton.setText("Загрузить [..]");
+
+		Label loadBasesInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadBasesInfoLabel.setText("Загрузить информацию о перевалочных базах щебня:");
+
+		Button loadBasesInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadBasesInfoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				DBHolder.getInstance().getTPDatabase().setBasesList(TPDataParser.parseBasesExcelFile(selected));
+			}
+		});
+		loadBasesInfoButton.setText("Загрузить [..]");
+
+		Label loadProdsConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadProdsConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"карьеры - точки потребления\":");
+
+		Button loadProdsConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadProdsConsDistanceMatrixButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				DBHolder.getInstance().getTPDatabase()
+						.setProdsConsDistanceMatrix(TPDataParser.parseProdConsDistanceMatrixExcelFile(selected));
+			}
+		});
+		loadProdsConsDistanceMatrixButton.setText("Загрузить [..]");
+
+		Label loadProdsBasesDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadProdsBasesDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"карьеры - базы\":");
+
+		Button loadProdsBasesDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadProdsBasesDistanceMatrixButton.setText("Загрузить [..]");
+
+		Label loadBasesConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadBasesConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"базы - точки потребления\":");
+
+		Button loadBasesConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadBasesConsDistanceMatrixButton.setText("Загрузить [..]");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Label enterEpsilonLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		enterEpsilonLabel.setEnabled(false);
+		enterEpsilonLabel.setText("Введите значение:");
+		new Label(roadMetalTabComposite, SWT.NONE);
+
+		enterEpsilonText = new Text(roadMetalTabComposite, SWT.BORDER);
+		enterEpsilonText.setEnabled(false);
+		enterEpsilonText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+
+		Button enterEpsilonButton = new Button(roadMetalTabComposite, SWT.NONE);
+		enterEpsilonButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double eps = Double.parseDouble(enterEpsilonText.getText());
+				DBHolder.getInstance().getTPDatabase().setEps(eps);
+			}
+		});
+		enterEpsilonButton.setEnabled(false);
+		enterEpsilonButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		enterEpsilonButton.setText("Задать");
+
+		Button useEpsilonCheckButton = new Button(roadMetalTabComposite, SWT.CHECK);
+		useEpsilonCheckButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Button btn = (Button) e.getSource();
+				if (btn.getSelection()) {
+					enterEpsilonLabel.setEnabled(true);
+					enterEpsilonText.setEnabled(true);
+					enterEpsilonButton.setEnabled(true);
+					DBHolder.getInstance().getTPDatabase().setEpsUsed(true);
+				} else {
+					enterEpsilonLabel.setEnabled(false);
+					enterEpsilonText.setEnabled(false);
+					enterEpsilonButton.setEnabled(false);
+					DBHolder.getInstance().getTPDatabase().setEpsUsed(false);
+				}
+			}
+		});
+		useEpsilonCheckButton.setText("Использовать дополнительные возмущения для исключения вырожденности задачи");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Button solveButton = new Button(roadMetalTabComposite, SWT.NONE);
+		solveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				List<Producer> producersList = DBHolder.getInstance().getTPDatabase().getProducersList();
+				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getTPDatabase().getConsumersList();
+
+				Matrix C0 = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
+
+				Matrix solution = Solver.solve(producersList, consumersList, C0);
+			}
+		});
+		solveButton.setText("РЕШИТЬ");
+		new Label(roadMetalTabComposite, SWT.NONE);
 
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
