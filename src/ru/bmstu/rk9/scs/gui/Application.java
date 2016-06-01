@@ -558,9 +558,17 @@ public class Application {
 		timePeriodText = new Text(warehouseNetTabComposite, SWT.BORDER);
 		timePeriodText.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
-		Button btnNewButton = new Button(warehouseNetTabComposite, SWT.NONE);
-		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		btnNewButton.setText("Задать");
+		Button setTimePeriodButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		setTimePeriodButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		setTimePeriodButton.setText("Задать");
+		setTimePeriodButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				double T = Double.parseDouble(timePeriodText.getText());
+				DBHolder.getInstance().getWHNetDatabase().setTimePeriod(T);
+			}
+		});
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
