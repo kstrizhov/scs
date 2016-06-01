@@ -548,7 +548,16 @@ public class Application {
 		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		new Label(warehouseNetTabComposite, SWT.NONE);
 		new Label(warehouseNetTabComposite, SWT.NONE);
-		new Label(warehouseNetTabComposite, SWT.NONE);
+
+		Button dbClearButton = new Button(warehouseNetTabComposite, SWT.NONE);
+		dbClearButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DBHolder.getInstance().getWHNetDatabase().clear();
+			}
+		});
+		dbClearButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		dbClearButton.setText("Очистить БД");
 
 		Label totalLabel = new Label(warehouseNetTabComposite, SWT.NONE);
 		totalLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
