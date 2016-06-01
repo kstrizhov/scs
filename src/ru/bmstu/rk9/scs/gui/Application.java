@@ -516,8 +516,6 @@ public class Application {
 
 				double total = calculateTotal(tableViewer);
 				totalText.setText(Double.toString(total));
-
-				// db.clear();
 			}
 		});
 		caclulcateWHNetButton.setText("Рассчитать");
