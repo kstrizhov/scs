@@ -552,6 +552,8 @@ public class Application {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DBHolder.getInstance().getWHNetDatabase().clear();
+				tree.removeAll();
+				tableViewer.getTable().removeAll();
 			}
 		});
 		dbClearButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
