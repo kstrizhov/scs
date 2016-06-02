@@ -13,7 +13,7 @@ public class WHNetTableViewerComparator extends ViewerComparator {
 
 	public WHNetTableViewerComparator() {
 		this.propertyIndex = 0;
-		direction = -DESCENDING;
+		direction = 0;
 	}
 
 	public int getDirection() {
