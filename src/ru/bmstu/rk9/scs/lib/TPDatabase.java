@@ -77,7 +77,7 @@ public class TPDatabase {
 		this.tariff = tariff;
 	}
 
-	private double eps = 0.0001;
+	private double eps = 0.000001;
 
 	public double getEps() {
 		return eps;
