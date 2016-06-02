@@ -7,6 +7,7 @@ public class ConsumptionPoint extends Point {
 
 	private double consumption;
 	private ArrayList<Month> monthsList;
+	private Base base;
 
 	public ConsumptionPoint(int id, String name, double consumption, ArrayList<Month> months) {
 		this.id = id;
@@ -33,5 +34,13 @@ public class ConsumptionPoint extends Point {
 
 	public ConsumptionPoint copy() {
 		return new ConsumptionPoint(id, name, consumption, monthsList);
+	}
+
+	public Base getBase() {
+		return base;
+	}
+
+	public void setBase(Base base) {
+		this.base = base;
 	}
 }

@@ -669,6 +669,19 @@ public class Application {
 		loadBasesConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"базы - точки потребления\":");
 
 		Button loadBasesConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadBasesConsDistanceMatrixButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open");
+				fileDialog.setFilterPath("/home/kirill/diplom_info/data");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				DBHolder.getInstance().getTPDatabase()
+						.setBasesConsDistanceMatrix(TPDataParser.parseBasesConsDistanceMatrixExcelFile(selected));
+			}
+		});
 		loadBasesConsDistanceMatrixButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadBasesConsDistanceMatrixButton.setText("Загрузить [..]");
 		new Label(roadMetalTabComposite, SWT.NONE);

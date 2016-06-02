@@ -116,7 +116,51 @@ public class Scheduler {
 			}
 		}
 
+		try {
+			setBasesToConsumers(DBHolder.getInstance().getTPDatabase().getConsumersList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			setBasesToConsumers(this.consumersList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		List<Base> bases = DBHolder.getInstance().getTPDatabase().getBasesList();
+
+		for (Base b : bases)
+			for (ConsumptionPoint p : this.consumersList)
+				if (p.getBase() == b)
+					b.setStock(b.getStock() + p.getConsumption());
+
+		for (Base b : bases)
+			System.err.println(b.name + ": " + b.getStock());
+
 		DBHolder.getInstance().getTPDatabase().setResultsList(resultsList);
+	}
+
+	private void setBasesToConsumers(List<ConsumptionPoint> consumers) throws Exception {
+		Matrix distances = DBHolder.getInstance().getTPDatabase().getBasesConsDistanceMatrix();
+		List<Base> bases = DBHolder.getInstance().getTPDatabase().getBasesList();
+
+		int numOfBases = distances.getRowDimension();
+		int numOfConsumers = distances.getColumnDimension();
+
+		if (consumers.size() != numOfConsumers) {
+			throw new Exception("Consumers list doesn't match distances matrix!");
+		}
+
+		for (int i = 0; i < numOfConsumers; i++)
+			consumers.get(i).setBase(bases.get(0));
+
+		for (int i = 0; i < numOfConsumers; i++) {
+			for (int j = 0; j < numOfBases; j++) {
+				if (distances.get(j, i) < distances.get(consumers.get(i).getBase().getId() - 1, i))
+					consumers.get(i).setBase(bases.get(j));
+			}
+		}
 	}
 
 	private void addEpsToProdsAndCons(double eps, List<Producer> producers, List<ConsumptionPoint> consumers) {
