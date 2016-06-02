@@ -720,7 +720,7 @@ public class Application {
 
 				Matrix C0 = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
 
-				Matrix solution = Solver.solve(producersList, consumersList, C0);
+				Solver.solve(producersList, consumersList, C0);
 			}
 		});
 		solveButton.setText("РЕШИТЬ");

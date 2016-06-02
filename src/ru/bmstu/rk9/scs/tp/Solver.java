@@ -12,13 +12,13 @@ import Jama.Matrix;
 import ru.bmstu.rk9.scs.tp.Point.Type;
 
 public class Solver {
-	
+
 	public static Matrix solve(List<Producer> producers, List<ConsumptionPoint> consumers, Matrix C0) {
-		
+
 		Matrix isolatedC0 = Solver.isolateTransportationProblem(producers, consumers, C0);
 
 		Plan plan = Solver.createBasicPlan(producers, consumers);
-		
+
 		try {
 			Solver.checkBasicPlan(plan, producers, consumers);
 		} catch (Exception e) {
@@ -194,6 +194,7 @@ public class Solver {
 
 		private Matrix P;
 		private int numOfProducers;
+		@SuppressWarnings("unused")
 		private int numOfConsumers;
 
 		private PotentialVectorItem(Matrix P, int numOfProducers, int numOfConsumers) {
@@ -553,10 +554,11 @@ public class Solver {
 			double rowSum = 0;
 			for (int j = 0; j < numOfColumns; j++)
 				rowSum += plan.X0.get(i, j);
-			
+
 			double roundedSum = new BigDecimal(rowSum).setScale(3, RoundingMode.UP).doubleValue();
-			double roundedProduction = new BigDecimal(producers.get(i).getProduction()).setScale(3, RoundingMode.UP).doubleValue();
-			
+			double roundedProduction = new BigDecimal(producers.get(i).getProduction()).setScale(3, RoundingMode.UP)
+					.doubleValue();
+
 			if (roundedSum != roundedProduction) {
 				System.err.println("producer[" + i + "] prod: " + producers.get(i).getProduction());
 				System.err.println("rowSum: " + rowSum);
@@ -572,12 +574,13 @@ public class Solver {
 
 		for (int j = 0; j < numOfColumns; j++) {
 			double columnSum = 0;
-			for (int i = 0; i < numOfRows; i++) 
+			for (int i = 0; i < numOfRows; i++)
 				columnSum += plan.X0.get(i, j);
-			
+
 			double roundedSum = new BigDecimal(columnSum).setScale(3, RoundingMode.UP).doubleValue();
-			double roundedConsumption = new BigDecimal(consumers.get(j).getConsumption()).setScale(3, RoundingMode.UP).doubleValue();
-			
+			double roundedConsumption = new BigDecimal(consumers.get(j).getConsumption()).setScale(3, RoundingMode.UP)
+					.doubleValue();
+
 			if (roundedSum != roundedConsumption) {
 				System.err.println("consumer[" + j + "] cons: " + consumers.get(j).getConsumption());
 				System.err.println("columnSum: " + columnSum);
