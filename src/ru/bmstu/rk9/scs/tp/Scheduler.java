@@ -11,25 +11,12 @@ import ru.bmstu.rk9.scs.tp.Point.Type;
 
 public class Scheduler {
 
-	private class ScheduleItem {
-		Month month;
-		Matrix consumersSuppliesPlan;
-		Matrix basesSuppliesPlan;
-
-		private ScheduleItem(Month month, Matrix consumersSuppliesPlan, Matrix basesSuppliesPlan) {
-			this.month = month;
-			this.consumersSuppliesPlan = consumersSuppliesPlan;
-			this.basesSuppliesPlan = basesSuppliesPlan;
-		}
-	}
-
 	private ArrayList<Producer> producersList;
 	private ArrayList<ConsumptionPoint> consumersList;
 
 	private Matrix prodsConsDistanceMatrix;
 
-	private ArrayList<ScheduleItem> consumersSuppliesList;
-	private ArrayList<ScheduleItem> basesSuppliesList;
+	private List<TPResultItem> resultsList = new ArrayList<>();
 
 	public Scheduler(TPDatabase db) {
 
@@ -53,8 +40,6 @@ public class Scheduler {
 
 	public void schedule() {
 
-		this.consumersSuppliesList = new ArrayList<ScheduleItem>();
-
 		for (int k = 1; k <= 12; k++) {
 
 			List<Producer> producers = new ArrayList<Producer>();
@@ -74,7 +59,6 @@ public class Scheduler {
 					currentConsumers.add(c);
 
 			if (currentConsumers.isEmpty()) {
-				System.out.println("NO SUPPLIES IN " + month);
 				continue;
 			}
 
@@ -101,33 +85,38 @@ public class Scheduler {
 
 			Matrix solution = Solver.solve(producers, currentConsumers, C0);
 
-			for (int i = 0; i < solution.getRowDimension(); i++)
+			for (int i = 0; i < solution.getRowDimension(); i++) {
 				for (int j = 0; j < solution.getColumnDimension(); j++) {
 					if (solution.get(i, j) != 0 && producers.get(i).getType() == Type.NATURAL
 							&& currentConsumers.get(j).getType() == Type.NATURAL) {
 						int id = currentConsumers.get(j).getId();
 
-						double currentConsumption = Math.round(currentConsumers.get(j).getConsumption());;
-						//TODO get rid of this loop
+						double currentConsumption = Math.round(currentConsumers.get(j).getConsumption());
+						;
+						// TODO get rid of this loop
 						for (ConsumptionPoint c : this.consumersList)
 							if (c.getId() == id)
 								currentConsumption = Math.round(c.getConsumption());
 
 						double newConsumption = currentConsumption - Math.round(solution.get(i, j));
-						System.out.println("currCons: " + currentConsumption);
-						System.out.println("res: " + Math.round(solution.get(i, j)));
-						System.out.println("newCons: " + newConsumption);
-						//TODO get rid of this loop
+
+						// TODO get rid of this loop
 						for (ConsumptionPoint c : this.consumersList)
 							if (c.getId() == id)
 								c.setConsumption(newConsumption);
+
+						double value = Math.floor(solution.get(i, j) * 100) / 100;
+						PointAmount amount = new PointAmount(
+								DBHolder.getInstance().getTPDatabase().getConsumersList().get(j), value);
+						TPResultItem item = new TPResultItem(
+								DBHolder.getInstance().getTPDatabase().getProducersList().get(i), Month.of(k), amount);
+						resultsList.add(item);
 					}
 				}
-
-			this.consumersSuppliesList.add(new ScheduleItem(month, solution, null));
-
-			System.out.println("MONTH: " + Month.of(k));
+			}
 		}
+
+		DBHolder.getInstance().getTPDatabase().setResultsList(resultsList);
 	}
 
 	private void addEpsToProdsAndCons(double eps, List<Producer> producers, List<ConsumptionPoint> consumers) {
@@ -140,5 +129,27 @@ public class Scheduler {
 		double lastProducersProduction = producers.get(numOfProducers - 1).getProduction();
 		int numOfConsumers = consumers.size();
 		producers.get(numOfProducers - 1).setProduction(lastProducersProduction + eps * numOfConsumers);
+	}
+
+	public class PointAmount {
+		public ConsumptionPoint point;
+		public double amount;
+
+		public PointAmount(ConsumptionPoint point, double amount) {
+			this.point = point;
+			this.amount = amount;
+		}
+	}
+
+	public class TPResultItem {
+		public Producer producer;
+		public Month month;
+		public PointAmount pointAmount;
+
+		public TPResultItem(Producer producer, Month month, PointAmount amount) {
+			this.producer = producer;
+			this.month = month;
+			this.pointAmount = amount;
+		}
 	}
 }
