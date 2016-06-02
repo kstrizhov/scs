@@ -6,6 +6,8 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -183,6 +185,30 @@ public class TPPlanTableViewer extends TableViewer {
 		column.setWidth(bound);
 		column.setResizable(true);
 		column.setMoveable(true);
+		column.addSelectionListener(getSelectionAdapter(column, colNumber));
 		return viewerColumn;
+	}
+
+	private TPPlanTableViewer getViewer() {
+		return this;
+	}
+
+	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TPScheduleViewerComparator comparator;
+				if (getViewer().getComparator() == null)
+					comparator = new TPScheduleViewerComparator();
+				else
+					comparator = (TPScheduleViewerComparator) getViewer().getComparator();
+				getViewer().setComparator(comparator);
+				comparator.setColumn(index);
+				int dir = comparator.getDirection();
+				getViewer().getTable().setSortDirection(dir);
+				getViewer().refresh();
+			}
+		};
+		return selectionAdapter;
 	}
 }

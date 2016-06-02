@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -43,7 +44,6 @@ import ru.bmstu.rk9.scs.tp.Scheduler;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
-import org.eclipse.jface.viewers.TableViewer;
 
 public class Application {
 
