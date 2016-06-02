@@ -54,7 +54,7 @@ public class Application {
 	private Table table;
 	private Text filterText;
 	private Text totalText;
-	private Table tpScheduleTableViewer;
+	private Table tpScheduleTable;
 	private Table tpStockTable;
 	private Text setEpsText;
 
@@ -722,18 +722,18 @@ public class Application {
 		basesStockLabel.setText("Запас щебня на перевалочных базах");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
-		TPScheduleTableViewer tpScheduleViewer = new TPScheduleTableViewer(roadMetalTabComposite,
+		TPScheduleTableViewer tpScheduleTableViewer = new TPScheduleTableViewer(roadMetalTabComposite,
 				SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tpScheduleTableViewer = tpScheduleViewer.getTable();
+		tpScheduleTable = tpScheduleTableViewer.getTable();
 		GridData gd_tpScheduleTableViewer = new GridData(SWT.FILL, SWT.FILL, false, false);
 		gd_tpScheduleTableViewer.widthHint = 730;
 		gd_tpScheduleTableViewer.heightHint = 190;
 		gd_tpScheduleTableViewer.horizontalSpan = 4;
-		tpScheduleTableViewer.setLayoutData(gd_tpScheduleTableViewer);
-		tpScheduleViewer.createColumns();
-		tpScheduleTableViewer.setHeaderVisible(true);
-		tpScheduleTableViewer.setLinesVisible(true);
-		tpScheduleViewer.setContentProvider(new ArrayContentProvider());
+		tpScheduleTable.setLayoutData(gd_tpScheduleTableViewer);
+		tpScheduleTableViewer.createColumns();
+		tpScheduleTable.setHeaderVisible(true);
+		tpScheduleTable.setLinesVisible(true);
+		tpScheduleTableViewer.setContentProvider(new ArrayContentProvider());
 
 		TPStockTableViewer tpStockTableViewer = new TPStockTableViewer(roadMetalTabComposite,
 				SWT.BORDER | SWT.FULL_SELECTION);
@@ -751,8 +751,8 @@ public class Application {
 			public void widgetSelected(SelectionEvent e) {
 				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
 				scheduler.schedule();
-				tpScheduleViewer.setInput(DBHolder.getInstance().getTPDatabase().getResultsList());
-				tpScheduleViewer.refresh();
+				tpScheduleTableViewer.setInput(DBHolder.getInstance().getTPDatabase().getResultsList());
+				tpScheduleTableViewer.refresh();
 				tpStockTableViewer.setInput(DBHolder.getInstance().getTPDatabase().getBasesList());
 				tpStockTableViewer.refresh();
 			}
