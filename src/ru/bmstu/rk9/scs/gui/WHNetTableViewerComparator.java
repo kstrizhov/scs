@@ -2,14 +2,14 @@ package ru.bmstu.rk9.scs.gui;
 
 import org.eclipse.jface.viewers.Viewer;
 
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 
 public class WHNetTableViewerComparator extends AbstractTableViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object element1, Object element2) {
-		ResultItem resultItem1 = (ResultItem) element1;
-		ResultItem resultItem2 = (ResultItem) element2;
+		WHNetResultItem resultItem1 = (WHNetResultItem) element1;
+		WHNetResultItem resultItem2 = (WHNetResultItem) element2;
 		int comparationResult = 0;
 		switch (propertyIndex) {
 		case 0:

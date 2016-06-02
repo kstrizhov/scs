@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import ru.bmstu.rk9.scs.lib.WHNetDatabase;
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem.SupplyType;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem.SupplyType;
 
 public class Calculator {
 
-	public static class ResultItem {
+	public static class WHNetResultItem {
 
 		private Warehouse warehouse;
 		private Resource resource;
@@ -28,7 +28,7 @@ public class Calculator {
 
 		private SupplyType type;
 
-		public ResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0,
+		public WHNetResultItem(Warehouse warehouse, Resource resource, double demand, double q0, double ts0, double d0,
 				SupplyType type, int numOfProductsInSupply) {
 			this.warehouse = warehouse;
 			this.resource = resource;
@@ -93,7 +93,7 @@ public class Calculator {
 			w.resourceIDsDemandsMap = calculateDemandsForUpperWHLvls(whNetMap, w.children, resourcesMap);
 		}
 
-		List<ResultItem> resultsList = db.getResultsList();
+		List<WHNetResultItem> resultsList = db.getResultsList();
 
 		double c1 = db.getC1();
 		double c2 = db.getC2();
@@ -247,7 +247,7 @@ public class Calculator {
 					break;
 				}
 
-				resultsList.add(new ResultItem(w, resource, R, q0, ts0, d0, type, numOfProductsInSupply));
+				resultsList.add(new WHNetResultItem(w, resource, R, q0, ts0, d0, type, numOfProductsInSupply));
 			}
 		}
 	}

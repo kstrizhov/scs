@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TableColumn;
 
 import ru.bmstu.rk9.scs.lib.StringSymbolSetSearchTool;
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 
 public class WHNetTableViewer extends TableViewer {
 
@@ -43,7 +43,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Integer.toString(item.getWarehouse().getId());
 			}
 		});
@@ -52,7 +52,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				ResultItem item = (ResultItem) cell.getElement();
+				WHNetResultItem item = (WHNetResultItem) cell.getElement();
 				String cellText = item.getWarehouse().getName();
 				cell.setText(cellText);
 				if (searchText != null && searchText.length() > 0) {
@@ -80,7 +80,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Integer.toString(item.getResource().getId());
 			}
 		});
@@ -89,7 +89,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				ResultItem item = (ResultItem) cell.getElement();
+				WHNetResultItem item = (WHNetResultItem) cell.getElement();
 				String cellText = item.getResource().getName();
 				cell.setText(cellText);
 				if (searchText != null && searchText.length() > 0) {
@@ -117,7 +117,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Double.toString(item.getDemand());
 			}
 		});
@@ -126,7 +126,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Double.toString(item.getQ0());
 			}
 		});
@@ -135,7 +135,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Double.toString(item.getTs0());
 			}
 		});
@@ -144,7 +144,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Double.toString(item.getD0());
 			}
 		});
@@ -153,7 +153,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				ResultItem item = (ResultItem) cell.getElement();
+				WHNetResultItem item = (WHNetResultItem) cell.getElement();
 				String cellText = item.getType().toString();
 				cell.setText(cellText);
 				if (upperCaseSearchText != null && upperCaseSearchText.length() > 0) {
@@ -181,7 +181,7 @@ public class WHNetTableViewer extends TableViewer {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				ResultItem item = (ResultItem) element;
+				WHNetResultItem item = (WHNetResultItem) element;
 				return Integer.toString(item.getNumOfProductsInSupply());
 			}
 		});

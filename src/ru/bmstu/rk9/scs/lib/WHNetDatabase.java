@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import Jama.Matrix;
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 import ru.bmstu.rk9.scs.whnet.Consumer;
 import ru.bmstu.rk9.scs.whnet.Resource;
 import ru.bmstu.rk9.scs.whnet.Supplier;
@@ -45,7 +45,7 @@ public class WHNetDatabase extends Observable {
 	protected SolveModelType secondLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 	protected SolveModelType thirdLvlSolveModelType = SolveModelType.SINGLEPRODUCT;
 
-	protected List<ResultItem> resultsList;
+	protected List<WHNetResultItem> resultsList;
 
 	protected Matrix normalDistributionValues;
 	protected double[] normalDistributionHeaderValues;
@@ -168,7 +168,7 @@ public class WHNetDatabase extends Observable {
 		this.resultsList = new ArrayList<>();
 	}
 
-	public List<ResultItem> getResultsList() {
+	public List<WHNetResultItem> getResultsList() {
 		return this.resultsList;
 	}
 }

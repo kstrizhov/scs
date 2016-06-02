@@ -30,7 +30,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import org.jfree.ui.RectangleInsets;
 
 import ru.bmstu.rk9.scs.lib.DBHolder;
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class ChartBuilder {
@@ -49,7 +49,7 @@ public class ChartBuilder {
 		}
 	}
 
-	private static XYSeries createResouceStockData(ResultItem item) {
+	private static XYSeries createResouceStockData(WHNetResultItem item) {
 		String resName = item.getResource().getName();
 		XYSeries series = new XYSeries(resName);
 
@@ -74,15 +74,15 @@ public class ChartBuilder {
 		int whID = warehouse.getId();
 		XYSeriesCollection dataset = new XYSeriesCollection();
 
-		List<ResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
+		List<WHNetResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
 
-		List<ResultItem> neededItems = new ArrayList<>();
+		List<WHNetResultItem> neededItems = new ArrayList<>();
 
-		for (ResultItem i : resultItems)
+		for (WHNetResultItem i : resultItems)
 			if (i.getWarehouse().getId() == whID)
 				neededItems.add(i);
 
-		for (ResultItem i : neededItems) {
+		for (WHNetResultItem i : neededItems) {
 			XYSeries data = createResouceStockData(i);
 			dataset.addSeries(data);
 		}
@@ -94,11 +94,11 @@ public class ChartBuilder {
 		int whID = warehouse.getId();
 		XYSeries totalStockSeries = new XYSeries("Текущий уровень");
 
-		List<ResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
+		List<WHNetResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
 
-		List<ResultItem> neededItems = new ArrayList<>();
+		List<WHNetResultItem> neededItems = new ArrayList<>();
 
-		for (ResultItem i : resultItems)
+		for (WHNetResultItem i : resultItems)
 			if (i.getWarehouse().getId() == whID)
 				neededItems.add(i);
 
@@ -110,7 +110,7 @@ public class ChartBuilder {
 			double t = step * i;
 			double q = 0;
 
-			for (ResultItem item : neededItems) {
+			for (WHNetResultItem item : neededItems) {
 				double r = item.getDemand() / T;
 				double ts0 = item.getTs0();
 				int n = (int) Math.floor(t / ts0);

@@ -3,7 +3,7 @@ package ru.bmstu.rk9.scs.gui;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 
 public class WHNetTableViewerFilter extends ViewerFilter {
 
@@ -20,7 +20,7 @@ public class WHNetTableViewerFilter extends ViewerFilter {
 		if (searchString == null || searchString.length() == 0) {
 			return true;
 		}
-		ResultItem r = (ResultItem) element;
+		WHNetResultItem r = (WHNetResultItem) element;
 		if (r.getWarehouse().getName().matches(searchString)) {
 			return true;
 		}

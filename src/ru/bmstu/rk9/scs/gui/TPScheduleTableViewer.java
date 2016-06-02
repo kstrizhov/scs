@@ -13,9 +13,9 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.bmstu.rk9.scs.tp.Scheduler.TPResultItem;
 
-public class TPPlanTableViewer extends TableViewer {
+public class TPScheduleTableViewer extends TableViewer {
 
-	public TPPlanTableViewer(Composite parent, int style) {
+	public TPScheduleTableViewer(Composite parent, int style) {
 		super(parent, style);
 	}
 
@@ -189,7 +189,7 @@ public class TPPlanTableViewer extends TableViewer {
 		return viewerColumn;
 	}
 
-	private TPPlanTableViewer getViewer() {
+	private TPScheduleTableViewer getViewer() {
 		return this;
 	}
 

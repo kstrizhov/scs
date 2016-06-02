@@ -42,7 +42,7 @@ import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase.SolveModelType;
 import ru.bmstu.rk9.scs.tp.Scheduler;
 import ru.bmstu.rk9.scs.whnet.Calculator;
-import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
+import ru.bmstu.rk9.scs.whnet.Calculator.WHNetResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class Application {
@@ -697,9 +697,9 @@ public class Application {
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 
-		Label transportationPlanLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		transportationPlanLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		transportationPlanLabel.setText("Календарный план перевозок");
+		Label tpScheduleLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		tpScheduleLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		tpScheduleLabel.setText("Календарный план перевозок");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label basesStockLabel = new Label(roadMetalTabComposite, SWT.NONE);
@@ -707,18 +707,18 @@ public class Application {
 		basesStockLabel.setText("Запас щебня на перевалочных базах");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
-		TPPlanTableViewer transportationPlanViewer = new TPPlanTableViewer(roadMetalTabComposite,
+		TPScheduleTableViewer tpScheduleViewer = new TPScheduleTableViewer(roadMetalTabComposite,
 				SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tpScheduleTableViewer = transportationPlanViewer.getTable();
+		tpScheduleTableViewer = tpScheduleViewer.getTable();
 		GridData gd_tpScheduleTableViewer = new GridData(SWT.LEFT, SWT.FILL, false, false);
 		gd_tpScheduleTableViewer.widthHint = 560;
 		gd_tpScheduleTableViewer.heightHint = 190;
 		gd_tpScheduleTableViewer.horizontalSpan = 3;
 		tpScheduleTableViewer.setLayoutData(gd_tpScheduleTableViewer);
-		transportationPlanViewer.createColumns();
+		tpScheduleViewer.createColumns();
 		tpScheduleTableViewer.setHeaderVisible(true);
 		tpScheduleTableViewer.setLinesVisible(true);
-		transportationPlanViewer.setContentProvider(new ArrayContentProvider());
+		tpScheduleViewer.setContentProvider(new ArrayContentProvider());
 
 		TableViewer tableViewer_1 = new TableViewer(roadMetalTabComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		tpStockTableViewer = tableViewer_1.getTable();
@@ -730,8 +730,8 @@ public class Application {
 			public void widgetSelected(SelectionEvent e) {
 				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
 				scheduler.schedule();
-				transportationPlanViewer.setInput(DBHolder.getInstance().getTPDatabase().getResultsList());
-				transportationPlanViewer.refresh();
+				tpScheduleViewer.setInput(DBHolder.getInstance().getTPDatabase().getResultsList());
+				tpScheduleViewer.refresh();
 			}
 		});
 		solveButton.setText("Расчет");
@@ -865,7 +865,7 @@ public class Application {
 		TableItem[] tableItems = table.getItems();
 
 		for (TableItem i : tableItems) {
-			ResultItem r = (ResultItem) i.getData();
+			WHNetResultItem r = (WHNetResultItem) i.getData();
 			switch (r.getType()) {
 			case SINGLE:
 				total += r.getD0();
