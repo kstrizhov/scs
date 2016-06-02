@@ -17,6 +17,7 @@ public class Scheduler {
 	private Matrix prodsConsDistanceMatrix;
 
 	private List<TPResultItem> resultsList = new ArrayList<>();
+	private double total;
 
 	public Scheduler(TPDatabase db) {
 
@@ -39,6 +40,8 @@ public class Scheduler {
 	}
 
 	public void schedule() {
+
+		double total = 0;
 
 		for (int k = 1; k <= 12; k++) {
 
@@ -114,6 +117,8 @@ public class Scheduler {
 					}
 				}
 			}
+
+			total += Solver.calculateCostFunction(solution, C0);
 		}
 
 		try {
@@ -136,6 +141,7 @@ public class Scheduler {
 					b.setStock(b.getStock() + p.getConsumption());
 
 		DBHolder.getInstance().getTPDatabase().setResultsList(resultsList);
+		this.total = total;
 	}
 
 	private void setBasesToConsumers(List<ConsumptionPoint> consumers) throws Exception {
@@ -170,6 +176,10 @@ public class Scheduler {
 		double lastProducersProduction = producers.get(numOfProducers - 1).getProduction();
 		int numOfConsumers = consumers.size();
 		producers.get(numOfProducers - 1).setProduction(lastProducersProduction + eps * numOfConsumers);
+	}
+
+	public double getTotal() {
+		return total;
 	}
 
 	public class PointAmount {

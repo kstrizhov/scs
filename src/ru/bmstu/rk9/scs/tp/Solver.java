@@ -31,7 +31,7 @@ public class Solver {
 			return applyPotentialMethod(plan, isolatedC0);
 	}
 
-	private static double calculateCostFunction(Matrix X, Matrix C) {
+	public static double calculateCostFunction(Matrix X, Matrix C) {
 		int numOfRows = X.getRowDimension();
 		int numOfColumns = X.getColumnDimension();
 
@@ -39,7 +39,11 @@ public class Solver {
 
 		for (int i = 0; i < numOfRows; i++)
 			for (int j = 0; j < numOfColumns; j++)
-				cost += C.get(i, j) * X.get(i, j);
+				try {
+					cost += C.get(i, j) * X.get(i, j);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.err.println(e.getMessage() + " Fictive point! Wasn't taken into account");
+				}
 
 		return cost;
 	}

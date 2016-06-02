@@ -57,6 +57,7 @@ public class Application {
 	private Table tpScheduleTable;
 	private Table tpStockTable;
 	private Text setEpsText;
+	private Text sumText;
 
 	/**
 	 * Launch the application.
@@ -751,6 +752,8 @@ public class Application {
 			public void widgetSelected(SelectionEvent e) {
 				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
 				scheduler.schedule();
+				String total = Double.toString(scheduler.getTotal());
+				sumText.setText(total);
 				tpScheduleTableViewer.setInput(DBHolder.getInstance().getTPDatabase().getResultsList());
 				tpScheduleTableViewer.refresh();
 				tpStockTableViewer.setInput(DBHolder.getInstance().getTPDatabase().getBasesList());
@@ -759,6 +762,18 @@ public class Application {
 		});
 		solveButton.setText("Расчет");
 		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Label sumLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		sumLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		sumLabel.setText("Стоимость снабжения:");
+
+		sumText = new Text(roadMetalTabComposite, SWT.BORDER);
+		sumText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		sumText.setEditable(false);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
