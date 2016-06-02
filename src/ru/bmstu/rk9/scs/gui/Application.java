@@ -743,6 +743,7 @@ public class Application {
 		tpStockTable.setHeaderVisible(true);
 		tpStockTable.setLinesVisible(true);
 		tpStockTableViewer.setContentProvider(new ArrayContentProvider());
+		tpStockTableViewer.setComparator(new TPStockViewerComparator());
 
 		Button solveButton = new Button(roadMetalTabComposite, SWT.NONE);
 		solveButton.addSelectionListener(new SelectionAdapter() {

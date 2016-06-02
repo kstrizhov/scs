@@ -4,6 +4,8 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -63,6 +65,25 @@ public class TPStockTableViewer extends TableViewer {
 		column.setWidth(bound);
 		column.setResizable(true);
 		column.setMoveable(true);
+		column.addSelectionListener(getSelectionAdapter(column, colNumber));
 		return viewerColumn;
+	}
+
+	private TPStockTableViewer getViewer() {
+		return this;
+	}
+
+	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TPStockViewerComparator comparator = (TPStockViewerComparator) getViewer().getComparator();
+				comparator.setColumn(index);
+				int dir = comparator.getDirection();
+				getViewer().getTable().setSortDirection(dir);
+				getViewer().refresh();
+			}
+		};
+		return selectionAdapter;
 	}
 }
