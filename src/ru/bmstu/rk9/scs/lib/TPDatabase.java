@@ -77,8 +77,7 @@ public class TPDatabase {
 		this.tariff = tariff;
 	}
 
-	private double eps = 0.0;
-	private boolean epsUsed = false;
+	private double eps = 0.0001;
 
 	public double getEps() {
 		return eps;
@@ -86,14 +85,6 @@ public class TPDatabase {
 
 	public void setEps(double eps) {
 		this.eps = eps;
-	}
-
-	public boolean isEpsUsed() {
-		return epsUsed;
-	}
-
-	public void setEpsUsed(boolean epsUsed) {
-		this.epsUsed = epsUsed;
 	}
 
 	private List<TPResultItem> resultsList;

@@ -43,11 +43,11 @@ import ru.bmstu.rk9.scs.tp.Scheduler;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
+import org.eclipse.jface.viewers.TableViewer;
 
 public class Application {
 
 	protected Shell shell;
-	private Text enterEpsilonText;
 	private Text setC3Text;
 	private Text setC2Text;
 	private Text setC1Text;
@@ -55,7 +55,10 @@ public class Application {
 	private Table table;
 	private Text filterText;
 	private Text totalText;
-	private Table tpViewerTable;
+	private Table tpScheduleTableViewer;
+	private Table tpStockTableViewer;
+	private Text tpFilterText;
+	private Text setEpsText;
 
 	/**
 	 * Launch the application.
@@ -568,15 +571,17 @@ public class Application {
 
 		Composite roadMetalTabComposite = new Composite(tabFolder, SWT.NONE);
 		roadMetalTabItem.setControl(roadMetalTabComposite);
-		GridLayout roadMetalGridLayout = new GridLayout(2, false);
+		GridLayout roadMetalGridLayout = new GridLayout(5, false);
 		roadMetalGridLayout.marginLeft = 10;
 		roadMetalGridLayout.marginRight = 10;
 		roadMetalTabComposite.setLayout(roadMetalGridLayout);
 
 		Label loadProducersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadProducersInfoLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		loadProducersInfoLabel.setText("Загрузить информацию о карьерах:");
 
 		Button loadProducersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadProducersInfoButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadProducersInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -590,11 +595,15 @@ public class Application {
 			}
 		});
 		loadProducersInfoButton.setText("Загрузить [..]");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label loadConsumersInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadConsumersInfoLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		loadConsumersInfoLabel.setText("Загрузить информацию о точках потребления:");
 
 		Button loadConsumersInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadConsumersInfoButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadConsumersInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -608,11 +617,15 @@ public class Application {
 			}
 		});
 		loadConsumersInfoButton.setText("Загрузить [..]");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label loadBasesInfoLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadBasesInfoLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		loadBasesInfoLabel.setText("Загрузить информацию о перевалочных базах щебня:");
 
 		Button loadBasesInfoButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadBasesInfoButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadBasesInfoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -626,11 +639,15 @@ public class Application {
 			}
 		});
 		loadBasesInfoButton.setText("Загрузить [..]");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label loadProdsConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadProdsConsDistanceMatrixLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		loadProdsConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"карьеры - точки потребления\":");
 
 		Button loadProdsConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadProdsConsDistanceMatrixButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadProdsConsDistanceMatrixButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -645,72 +662,77 @@ public class Application {
 			}
 		});
 		loadProdsConsDistanceMatrixButton.setText("Загрузить [..]");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label loadBasesConsDistanceMatrixLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		loadBasesConsDistanceMatrixLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		loadBasesConsDistanceMatrixLabel.setText("Загрузить матрицу расстояний \"базы - точки потребления\":");
 
 		Button loadBasesConsDistanceMatrixButton = new Button(roadMetalTabComposite, SWT.NONE);
+		loadBasesConsDistanceMatrixButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		loadBasesConsDistanceMatrixButton.setText("Загрузить [..]");
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 
-		Label enterEpsilonLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		enterEpsilonLabel.setEnabled(false);
-		enterEpsilonLabel.setText("Введите значение:");
-		new Label(roadMetalTabComposite, SWT.NONE);
+		Label setEpsLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		setEpsLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		setEpsLabel.setText("Задать новое значение epsilon:");
 
-		enterEpsilonText = new Text(roadMetalTabComposite, SWT.BORDER);
-		enterEpsilonText.setEnabled(false);
+		setEpsText = new Text(roadMetalTabComposite, SWT.BORDER);
+		setEpsText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		Button enterEpsilonButton = new Button(roadMetalTabComposite, SWT.NONE);
-		enterEpsilonButton.addSelectionListener(new SelectionAdapter() {
+		Button setEpsButton = new Button(roadMetalTabComposite, SWT.NONE);
+		setEpsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				double eps = Double.parseDouble(enterEpsilonText.getText());
+				double eps = Double.parseDouble(setEpsText.getText());
 				DBHolder.getInstance().getTPDatabase().setEps(eps);
 			}
 		});
-		enterEpsilonButton.setEnabled(false);
-		enterEpsilonButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		enterEpsilonButton.setText("Задать");
-
-		Button useEpsilonCheckButton = new Button(roadMetalTabComposite, SWT.CHECK);
-		useEpsilonCheckButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Button btn = (Button) e.getSource();
-				if (btn.getSelection()) {
-					enterEpsilonLabel.setEnabled(true);
-					enterEpsilonText.setEnabled(true);
-					enterEpsilonButton.setEnabled(true);
-					DBHolder.getInstance().getTPDatabase().setEpsUsed(true);
-				} else {
-					enterEpsilonLabel.setEnabled(false);
-					enterEpsilonText.setEnabled(false);
-					enterEpsilonButton.setEnabled(false);
-					DBHolder.getInstance().getTPDatabase().setEpsUsed(false);
-				}
-			}
-		});
-		useEpsilonCheckButton.setText("Использовать дополнительные возмущения для исключения вырожденности задачи");
+		setEpsButton.setText("Задать");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label transportationPlanLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		transportationPlanLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		transportationPlanLabel.setText("Календарный план перевозок");
+		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Label basesStockLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		basesStockLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		basesStockLabel.setText("Запас щебня на перевалочных базах");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		TPPlanTableViewer transportationPlanViewer = new TPPlanTableViewer(roadMetalTabComposite,
 				SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tpViewerTable = transportationPlanViewer.getTable();
-		GridData gd_table_1 = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gd_table_1.heightHint = 160;
-		tpViewerTable.setLayoutData(gd_table_1);
+		tpScheduleTableViewer = transportationPlanViewer.getTable();
+		GridData gd_tpScheduleTableViewer = new GridData(SWT.LEFT, SWT.FILL, false, false);
+		gd_tpScheduleTableViewer.widthHint = 560;
+		gd_tpScheduleTableViewer.heightHint = 190;
+		gd_tpScheduleTableViewer.horizontalSpan = 3;
+		tpScheduleTableViewer.setLayoutData(gd_tpScheduleTableViewer);
 		transportationPlanViewer.createColumns();
-		tpViewerTable.setHeaderVisible(true);
-		tpViewerTable.setLinesVisible(true);
+		tpScheduleTableViewer.setHeaderVisible(true);
+		tpScheduleTableViewer.setLinesVisible(true);
 		transportationPlanViewer.setContentProvider(new ArrayContentProvider());
+
+		TableViewer tableViewer_1 = new TableViewer(roadMetalTabComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		tpStockTableViewer = tableViewer_1.getTable();
+		tpStockTableViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+
+		Label tpFilterLabel = new Label(roadMetalTabComposite, SWT.NONE);
+		tpFilterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		tpFilterLabel.setText("Фильтр:");
+
+		tpFilterText = new Text(roadMetalTabComposite, SWT.BORDER);
+		tpFilterText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Button solveButton = new Button(roadMetalTabComposite, SWT.NONE);
@@ -723,7 +745,10 @@ public class Application {
 				transportationPlanViewer.refresh();
 			}
 		});
-		solveButton.setText("РЕШИТЬ");
+		solveButton.setText("Расчет");
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
+		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		filterText.addKeyListener(new KeyAdapter() {
