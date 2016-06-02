@@ -1,33 +1,10 @@
 package ru.bmstu.rk9.scs.gui;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.swt.SWT;
 
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 
-public class WHNetTableViewerComparator extends ViewerComparator {
-	private int propertyIndex;
-	private static final int DESCENDING = 1;
-	private int direction = DESCENDING;
-
-	public WHNetTableViewerComparator() {
-		this.propertyIndex = 0;
-		direction = 0;
-	}
-
-	public int getDirection() {
-		return direction == 1 ? SWT.DOWN : SWT.UP;
-	}
-
-	public void setColumn(int column) {
-		if (column == this.propertyIndex) {
-			direction = 1 - direction;
-		} else {
-			this.propertyIndex = column;
-			direction = DESCENDING;
-		}
-	}
+public class WHNetTableViewerComparator extends AbstractTableViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object element1, Object element2) {
