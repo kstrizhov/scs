@@ -57,7 +57,6 @@ public class Application {
 	private Text totalText;
 	private Table tpScheduleTableViewer;
 	private Table tpStockTableViewer;
-	private Text tpFilterText;
 	private Text setEpsText;
 
 	/**
@@ -724,16 +723,6 @@ public class Application {
 		TableViewer tableViewer_1 = new TableViewer(roadMetalTabComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		tpStockTableViewer = tableViewer_1.getTable();
 		tpStockTableViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-
-		Label tpFilterLabel = new Label(roadMetalTabComposite, SWT.NONE);
-		tpFilterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		tpFilterLabel.setText("Фильтр:");
-
-		tpFilterText = new Text(roadMetalTabComposite, SWT.BORDER);
-		tpFilterText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Button solveButton = new Button(roadMetalTabComposite, SWT.NONE);
 		solveButton.addSelectionListener(new SelectionAdapter() {
