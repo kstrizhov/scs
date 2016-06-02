@@ -11,16 +11,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import ru.bmstu.rk9.scs.gui.WHNetTableViewer;
-
 public class WHNetDataWriter {
 
-	public static HSSFWorkbook createWorkbookFromTable(WHNetTableViewer viewer) {
+	public static HSSFWorkbook createWorkbookFromTable(TableViewer viewer) {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 

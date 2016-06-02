@@ -764,7 +764,25 @@ public class Application {
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Button writeScheduleReportButton = new Button(roadMetalTabComposite, SWT.NONE);
+		writeScheduleReportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setText("Save");
+				fileDialog.setFilterPath("/");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				HSSFWorkbook wb = WHNetDataWriter.createWorkbookFromTable(tpScheduleTableViewer);
+				WHNetDataWriter.dumpWorkbookToAFile(wb, selected, shell);
+			}
+		});
+		GridData gd_scheduleReportBtn = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_scheduleReportBtn.widthHint = 215;
+		writeScheduleReportButton.setLayoutData(gd_scheduleReportBtn);
+		writeScheduleReportButton.setText("Выгрузить план перевозок");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		Label sumLabel = new Label(roadMetalTabComposite, SWT.NONE);
@@ -778,7 +796,25 @@ public class Application {
 		sumText.setEditable(false);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
-		new Label(roadMetalTabComposite, SWT.NONE);
+
+		Button writeStockReportButton = new Button(roadMetalTabComposite, SWT.NONE);
+		writeStockReportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setText("Save");
+				fileDialog.setFilterPath("/");
+				String[] filterExtensions = { "*.xls" };
+				fileDialog.setFilterExtensions(filterExtensions);
+				String selected = fileDialog.open();
+				HSSFWorkbook wb = WHNetDataWriter.createWorkbookFromTable(tpStockTableViewer);
+				WHNetDataWriter.dumpWorkbookToAFile(wb, selected, shell);
+			}
+		});
+		GridData gd_stockReportBtn = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_stockReportBtn.widthHint = 215;
+		writeStockReportButton.setLayoutData(gd_stockReportBtn);
+		writeStockReportButton.setText("Выгрузить отчет о запасах");
 		new Label(roadMetalTabComposite, SWT.NONE);
 
 		filterText.addKeyListener(new KeyAdapter() {
