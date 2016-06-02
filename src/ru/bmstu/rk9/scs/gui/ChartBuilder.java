@@ -5,11 +5,20 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -26,7 +35,11 @@ import ru.bmstu.rk9.scs.whnet.Warehouse;
 
 public class ChartBuilder {
 
+	private static final int divisionValue = 10000;
+
 	public static class ChartFrame extends ChartComposite {
+
+		XYSeriesCollection dataset;
 
 		public ChartFrame(final Composite comp, final int style) {
 			super(comp, style, null, ChartComposite.DEFAULT_WIDTH, ChartComposite.DEFAULT_HEIGHT, 0, 0,
@@ -42,9 +55,9 @@ public class ChartBuilder {
 
 		double T = DBHolder.getInstance().getWHNetDatabase().getTimePeriod();
 
-		double step = T / 1000;
+		double step = T / divisionValue;
 
-		for (int i = 0; i <= 1000; i++) {
+		for (int i = 0; i <= divisionValue; i++) {
 			double t = step * i;
 			double r = item.getDemand() / T;
 			double ts0 = item.getTs0();
@@ -79,7 +92,7 @@ public class ChartBuilder {
 
 	public static XYSeriesCollection createWhTotalStockData(Warehouse warehouse) {
 		int whID = warehouse.getId();
-		XYSeries totalStockSeries = new XYSeries("Текущий уровень запасов склада");
+		XYSeries totalStockSeries = new XYSeries("Текущий уровень");
 
 		List<ResultItem> resultItems = DBHolder.getInstance().getWHNetDatabase().getResultsList();
 
@@ -91,9 +104,9 @@ public class ChartBuilder {
 
 		double T = DBHolder.getInstance().getWHNetDatabase().getTimePeriod();
 
-		double step = T / 10000;
+		double step = T / divisionValue;
 
-		for (int i = 0; i <= 10000; i++) {
+		for (int i = 0; i <= divisionValue; i++) {
 			double t = step * i;
 			double q = 0;
 
@@ -107,7 +120,7 @@ public class ChartBuilder {
 			totalStockSeries.add(t, q);
 		}
 
-		XYSeries maxStockLvlSeries = new XYSeries("Максимальный уровень запасов");
+		XYSeries maxStockLvlSeries = new XYSeries("Макс. уровень");
 		maxStockLvlSeries.add(0.0, warehouse.getVolume());
 		maxStockLvlSeries.add(T, warehouse.getVolume());
 
@@ -123,10 +136,91 @@ public class ChartBuilder {
 		Display display = Display.getCurrent();
 		Shell shell = new Shell(display);
 		shell.setText("chart");
-		shell.setSize(800, 400);
-		shell.setLayout(new FillLayout());
+		shell.setSize(900, 500);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		shell.setLayout(layout);
 
-		createChartFrame(shell, dataset, chartTitle);
+		ChartFrame frame = createChartFrame(shell, dataset, chartTitle);
+		GridData gd_frame = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3);
+		frame.setLayoutData(gd_frame);
+
+		ChartTableViewer viewer = new ChartTableViewer(shell, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		Table table = viewer.getTable();
+		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, false, true);
+		gd_table.widthHint = 200;
+		table.setLayoutData(gd_table);
+		viewer.createColumn();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+
+		table.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				TableItem item = (TableItem) event.item;
+				XYSeries series = (XYSeries) item.getData();
+				XYSeriesCollection dataset = (XYSeriesCollection) frame.getChart().getXYPlot().getDataset();
+				if (event.detail == SWT.CHECK)
+					if (!item.getChecked()) {
+						dataset.removeSeries(series);
+					} else {
+						dataset.addSeries(series);
+					}
+			}
+		});
+
+		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setInput(frame.dataset.getSeries());
+
+		TableItem[] items = table.getItems();
+		for (TableItem i : items)
+			i.setChecked(true);
+
+		viewer.refresh();
+
+		Button selectAllButton = new Button(shell, SWT.NONE);
+		selectAllButton.setText("Выбрать все");
+		GridData gd_selectAll = new GridData(SWT.FILL, SWT.FILL, false, false);
+		selectAllButton.setLayoutData(gd_selectAll);
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] items = table.getItems();
+
+				for (TableItem i : items) {
+					if (!i.getChecked()) {
+						i.setChecked(true);
+						Event event = new Event();
+						event.item = i;
+						event.detail = SWT.CHECK;
+						table.notifyListeners(SWT.Selection, event);
+					}
+				}
+			}
+		});
+
+		Button deselectAllButton = new Button(shell, SWT.NONE);
+		deselectAllButton.setText("Отменить все");
+		GridData gd_deselectAll = new GridData(SWT.FILL, SWT.FILL, false, false);
+		deselectAllButton.setLayoutData(gd_deselectAll);
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] items = table.getItems();
+
+				for (TableItem i : items) {
+					if (i.getChecked()) {
+						i.setChecked(false);
+						Event event = new Event();
+						event.item = i;
+						event.detail = SWT.CHECK;
+						table.notifyListeners(SWT.Selection, event);
+					}
+				}
+			}
+		});
+
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
@@ -140,6 +234,8 @@ public class ChartBuilder {
 	private static ChartFrame createChartFrame(Composite composite, XYSeriesCollection dataset, String chartTitle) {
 
 		ChartFrame frame = new ChartFrame(composite, SWT.NONE);
+
+		frame.dataset = dataset;
 
 		final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, "Единиц продукции, шт.", "Время, мес.",
 				dataset);
