@@ -78,24 +78,8 @@ public class Scheduler {
 				continue;
 			}
 
-			System.out.println("BEFORE EPS");
-			for (Producer p : producers)
-				System.out.println("pr[" + p.getId() + "]: " + p.getProduction());
-			System.out.println("");
-			for (ConsumptionPoint c : consumers)
-				System.out.println("cons[" + c.getId() + "]: " + c.getConsumption());
-			System.out.println("");
-
 			double eps = DBHolder.getInstance().getTPDatabase().getEps();
 			addEpsToProdsAndCons(eps, producers, currentConsumers);
-
-			System.out.println("AFTER EPS");
-			for (Producer p : producers)
-				System.out.println("pr[" + p.getId() + "]: " + p.getProduction());
-			System.out.println("");
-			for (ConsumptionPoint c : consumers)
-				System.out.println("cons[" + c.getId() + "]: " + c.getConsumption());
-			System.out.println("");
 
 			ArrayList<Integer> currentConsumersIdList = new ArrayList<Integer>();
 			for (ConsumptionPoint c : currentConsumers)

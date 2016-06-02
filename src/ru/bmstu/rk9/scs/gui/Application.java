@@ -1,7 +1,6 @@
 package ru.bmstu.rk9.scs.gui;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -34,17 +33,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import Jama.Matrix;
 import ru.bmstu.rk9.scs.lib.DBHolder;
 import ru.bmstu.rk9.scs.lib.TPDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataParser;
 import ru.bmstu.rk9.scs.lib.WHNetDataWriter;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase;
 import ru.bmstu.rk9.scs.lib.WHNetDatabase.SolveModelType;
-import ru.bmstu.rk9.scs.tp.ConsumptionPoint;
-import ru.bmstu.rk9.scs.tp.Producer;
 import ru.bmstu.rk9.scs.tp.Scheduler;
-import ru.bmstu.rk9.scs.tp.Solver;
 import ru.bmstu.rk9.scs.whnet.Calculator;
 import ru.bmstu.rk9.scs.whnet.Calculator.ResultItem;
 import ru.bmstu.rk9.scs.whnet.Warehouse;
@@ -715,12 +710,8 @@ public class Application {
 		solveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				List<Producer> producersList = DBHolder.getInstance().getTPDatabase().getProducersList();
-				List<ConsumptionPoint> consumersList = DBHolder.getInstance().getTPDatabase().getConsumersList();
-
-				Matrix C0 = DBHolder.getInstance().getTPDatabase().getProdsConsDistanceMatrix();
-
-				Solver.solve(producersList, consumersList, C0);
+				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
+				scheduler.schedule();
 			}
 		});
 		solveButton.setText("РЕШИТЬ");
@@ -787,16 +778,6 @@ public class Application {
 
 		MenuItem howToUseMenuItem = new MenuItem(helpMenu, SWT.NONE);
 		howToUseMenuItem.setText("How to use");
-
-		MenuItem solveTestMenuItem = new MenuItem(helpMenu, SWT.NONE);
-		solveTestMenuItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Scheduler scheduler = new Scheduler(DBHolder.getInstance().getTPDatabase());
-				scheduler.schedule();
-			}
-		});
-		solveTestMenuItem.setText("SOLVE TEST");
 
 		MenuItem loadNetDataMenuItem = new MenuItem(helpMenu, SWT.NONE);
 		loadNetDataMenuItem.addSelectionListener(new SelectionAdapter() {
