@@ -135,9 +135,6 @@ public class Scheduler {
 				if (p.getBase() == b)
 					b.setStock(b.getStock() + p.getConsumption());
 
-		for (Base b : bases)
-			System.err.println(b.name + ": " + b.getStock());
-
 		DBHolder.getInstance().getTPDatabase().setResultsList(resultsList);
 	}
 
