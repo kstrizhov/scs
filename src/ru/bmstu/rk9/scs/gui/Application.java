@@ -772,7 +772,9 @@ public class Application {
 		sumLabel.setText("Стоимость снабжения:");
 
 		sumText = new Text(roadMetalTabComposite, SWT.BORDER);
-		sumText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		GridData gd_sumText = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_sumText.widthHint = 130;
+		sumText.setLayoutData(gd_sumText);
 		sumText.setEditable(false);
 		new Label(roadMetalTabComposite, SWT.NONE);
 		new Label(roadMetalTabComposite, SWT.NONE);
