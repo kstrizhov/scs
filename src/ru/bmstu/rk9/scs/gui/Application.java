@@ -3,7 +3,12 @@ package ru.bmstu.rk9.scs.gui;
 import java.util.HashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -213,6 +218,28 @@ public class Application {
 
 				XYSeriesCollection dataset = ChartBuilder.createWhTotalStockData(wh);
 				ChartBuilder.openChartFrame(dataset, "Общий уровень запасов склада №" + wh.getId());
+			}
+		});
+
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				if (selection == null || selection.isEmpty())
+					return;
+
+				final Object sel = selection.getFirstElement();
+
+				final ITreeContentProvider provider = (ITreeContentProvider) treeViewer.getContentProvider();
+
+				if (!provider.hasChildren(sel))
+					return;
+
+				if (treeViewer.getExpandedState(sel))
+					treeViewer.collapseToLevel(sel, AbstractTreeViewer.ALL_LEVELS);
+				else
+					treeViewer.expandToLevel(sel, 1);
 			}
 		});
 
