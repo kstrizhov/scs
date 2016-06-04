@@ -22,7 +22,7 @@ public class TPScheduleTableViewer extends TableViewer {
 	public void createColumns() {
 		String[] titles = { "prod_id", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV",
 				"DEC" };
-		int[] bounds = { 60, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70 };
+		int[] bounds = { 65, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70 };
 
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
 		col.setLabelProvider(new ColumnLabelProvider() {
